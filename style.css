@@ -69,11 +69,15 @@ body {
 }
 
 .top-nav .logo {
-    font-size: 1rem;
-    letter-spacing: 0.35rem;
-    text-transform: uppercase;
     text-decoration: none;
-    color: var(--text);
+    display: flex;
+    align-items: center;
+}
+
+.logo-gif {
+    height: 2rem;
+    width: auto;
+    display: block;
 }
 
 .tab-links {
