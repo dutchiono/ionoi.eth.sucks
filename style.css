@@ -163,55 +163,50 @@ body {
     margin-top: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .skill-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: start;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
     background: rgba(255, 255, 255, 0.02);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .skill-row:hover {
     border-color: rgba(58, 221, 194, 0.3);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .skill-row img {
-    width: auto;
-    height: 32px;
+    width: 100%;
+    height: 40px;
     border-radius: 6px;
-    flex-shrink: 0;
+    object-fit: contain;
+    display: block;
 }
 
 .skill-row span {
     color: var(--muted);
     font-size: 0.9rem;
     line-height: 1.6;
-    flex: 1;
 }
 
 .skill-row span strong {
     color: var(--accent);
     font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
 }
 
-.skills-list {
-    margin: 1rem 0;
-    padding-left: 1rem;
-    color: var(--muted);
-    line-height: 1.6;
-    display: grid;
-    gap: 0.35rem;
-}
-
-.skills-list li::marker {
-    color: var(--accent);
-}
 
 .skill-icons {
     margin-top: 1rem;
