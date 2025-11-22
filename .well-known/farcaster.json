@@ -7,18 +7,16 @@
   "frame": {
     "version": "1",
     "name": "Ionoi Purple Lab",
-    "iconUrl": "https://ionoi.eth.sucks/icon.png",
-    "homeUrl": "https://ionoi.eth.sucks",
-    "imageUrl": "https://ionoi.eth.sucks/image.png",
+    "iconUrl": "https://dutchiono.github.io/ionoi.eth.sucks/icon.png",
+    "homeUrl": "https://dutchiono.github.io/ionoi.eth.sucks",
+    "imageUrl": "https://dutchiono.github.io/ionoi.eth.sucks/image.png",
     "buttonTitle": "Open",
-    "splashImageUrl": "https://ionoi.eth.sucks/splash.png",
+    "splashImageUrl": "https://dutchiono.github.io/ionoi.eth.sucks/splash.png",
     "splashBackgroundColor": "#0b0d1b",
-    "webhookUrl": "https://ionoi.eth.sucks/api/webhook",
     "subtitle": "Personal site & projects",
     "description": "Projects, skills, and journal from Dutch.",
     "screenshotUrls": [
-      "https://ionoi.eth.sucks/image.png",
-      "https://ionoi.eth.sucks/screenshot1.png"
+      "https://dutchiono.github.io/ionoi.eth.sucks/image.png"
     ],
     "primaryCategory": "blog",
     "tags": [
@@ -27,18 +25,18 @@
       "story",
       "projects"
     ],
-    "heroImageUrl": "https://ionoi.eth.sucks/image.png",
+    "heroImageUrl": "https://dutchiono.github.io/ionoi.eth.sucks/image.png",
     "tagline": "Journal-led, Farcaster-ready",
     "ogTitle": "Ionoi Purple Lab",
-    "ogDescription": "Story beats, project grids, and Omnipin-ready mini-app notes from Dutch.",
-    "ogImageUrl": "https://ionoi.eth.sucks/image.png"
+    "ogDescription": "Projects, skills, and journal from Dutch.",
+    "ogImageUrl": "https://dutchiono.github.io/ionoi.eth.sucks/image.png"
   },
   "miniapp": {
     "version": "1",
     "name": "Ionoi Purple Lab",
     "description": "Projects, skills, and journal from Dutch.",
-    "iconUrl": "https://ionoi.eth.sucks/icon.png",
-    "homeUrl": "https://ionoi.eth.sucks",
+    "iconUrl": "https://dutchiono.github.io/ionoi.eth.sucks/icon.png",
+    "homeUrl": "https://dutchiono.github.io/ionoi.eth.sucks",
     "canonicalDomain": "ionoi.eth.sucks",
     "requiredChains": ["eip155:8453"],
     "tags": ["decentralized", "mini-app", "projects", "base"],
@@ -53,11 +51,11 @@
   "frames": [
     {
       "name": "Ionoi Blog",
-      "frameUrl": "https://ionoi.eth.sucks",
+      "frameUrl": "https://dutchiono.github.io/ionoi.eth.sucks",
       "description": "Neon landing page that combines hero copy, a project grid, and journal logs for every build.",
-      "imageUrl": "https://ionoi.eth.sucks/image.png",
-      "iconUrl": "https://ionoi.eth.sucks/icon.png",
-      "splashImageUrl": "https://ionoi.eth.sucks/splash.png"
+      "imageUrl": "https://dutchiono.github.io/ionoi.eth.sucks/image.png",
+      "iconUrl": "https://dutchiono.github.io/ionoi.eth.sucks/icon.png",
+      "splashImageUrl": "https://dutchiono.github.io/ionoi.eth.sucks/splash.png"
     }
   ]
 }

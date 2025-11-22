@@ -8,9 +8,9 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="ionoi.eth.sucks | Projects">
     <meta property="og:description" content="Everything Dutch is currently working on, styled like wojtek.im/projects.">
-    <meta property="og:image" content="https://ionoi.eth.sucks/image.png">
-    <meta property="og:url" content="https://ionoi.eth.sucks">
-    <meta name="fc:miniapp" content='{"version":"1","name":"Ionoi Purple Lab","iconUrl":"https://ionoi.eth.sucks/icon.png","homeUrl":"https://ionoi.eth.sucks","imageUrl":"https://ionoi.eth.sucks/image.png","buttonTitle":"Open","splashImageUrl":"https://ionoi.eth.sucks/splash.png","splashBackgroundColor":"#0b0d1b"}'>
+    <meta property="og:image" content="https://dutchiono.github.io/ionoi.eth.sucks/image.png">
+    <meta property="og:url" content="https://dutchiono.github.io/ionoi.eth.sucks">
+    <meta name="fc:miniapp" content='{"version":"1","name":"Ionoi Purple Lab","iconUrl":"https://dutchiono.github.io/ionoi.eth.sucks/icon.png","homeUrl":"https://dutchiono.github.io/ionoi.eth.sucks","imageUrl":"https://dutchiono.github.io/ionoi.eth.sucks/image.png","buttonTitle":"Open","splashImageUrl":"https://dutchiono.github.io/ionoi.eth.sucks/splash.png","splashBackgroundColor":"#0b0d1b"}'>
     <script src="https://unpkg.com/@farcaster/miniapp-sdk@latest/dist/index.umd.js"></script>
     <link rel="stylesheet" href="style.css">
     <title>ionoi.eth.sucks | Projects</title>
@@ -36,51 +36,33 @@
                 <header class="page-heading">
                     <h1>Hello from Dutch</h1>
                 </header>
-                <p>Hi. I build Farcaster-aware, decentralized experiences with Supabase, Redis, Hardhat, and AI pipelines.</p>
+                <p>I build Farcaster-aware, decentralized experiences that blend on-chain interactions with off-chain infrastructure. My work focuses on creating seamless mini-apps that leverage Supabase for real-time data, Redis for caching, Hardhat for smart contract development, and AI pipelines for automation. I'm passionate about making Web3 accessible through thoughtful UX and robust backend systems.</p>
                 <div class="skills-block">
                     <h2>Skills</h2>
-                    <div class="skills-grid">
-                        <div class="skill-category">
-                            <h3>Frontend</h3>
-                            <div class="skill-item">
-                                <img src="https://skillicons.dev/icons?i=nextjs,react,tailwindcss,typescript" alt="Frontend">
-                                <span>Next.js · React · Tailwind CSS · TypeScript · Radix UI · Framer Motion · TanStack Query · React Hook Form</span>
-                            </div>
+                    <div class="skills-list">
+                        <div class="skill-row">
+                            <img src="https://skillicons.dev/icons?i=nextjs,react,tailwindcss,typescript,vite" alt="Frontend">
+                            <span><strong>Frontend:</strong> Next.js · React · Tailwind CSS · TypeScript · Vite · Radix UI · Framer Motion · TanStack Query · React Hook Form · Three.js · React Three Fiber</span>
                         </div>
-                        <div class="skill-category">
-                            <h3>Backend + Data</h3>
-                            <div class="skill-item">
-                                <img src="https://skillicons.dev/icons?i=supabase,redis,postgres,nodejs" alt="Backend">
-                                <span>Supabase · PostgreSQL · Redis · BullMQ · Express.js · LevelDB</span>
-                            </div>
+                        <div class="skill-row">
+                            <img src="https://skillicons.dev/icons?i=supabase,redis,postgres,nodejs" alt="Backend">
+                            <span><strong>Backend:</strong> Supabase · PostgreSQL · Redis · BullMQ · Express.js · LevelDB · Socket.io · TypeORM · SQLite</span>
                         </div>
-                        <div class="skill-category">
-                            <h3>Web3 / Blockchain</h3>
-                            <div class="skill-item">
-                                <img src="https://skillicons.dev/icons?i=hardhat,solidity,ethereum,ipfs" alt="Web3">
-                                <span>Hardhat · Solidity · Ethers.js · Wagmi · Viem · OpenZeppelin · Base · Shovel indexer · Zodiac</span>
-                            </div>
+                        <div class="skill-row">
+                            <img src="https://skillicons.dev/icons?i=hardhat,solidity,ethereum,ipfs" alt="Web3">
+                            <span><strong>Web3 / Blockchain:</strong> Hardhat · Solidity · Ethers.js · Wagmi · Viem · OpenZeppelin · Base · Shovel indexer · Zodiac · Anchor · Solana Web3.js · SPL Token · MagicBlock/Bolt SDK</span>
                         </div>
-                        <div class="skill-category">
-                            <h3>Farcaster & Integration</h3>
-                            <div class="skill-item">
-                                <img src="https://skillicons.dev/icons?i=farcaster,base,telegram,github" alt="Integration">
-                                <span>Farcaster SDK · Neynar SDK · Base Pay · Telegram Bot API · GitHub workflows · Vercel</span>
-                            </div>
+                        <div class="skill-row">
+                            <img src="https://skillicons.dev/icons?i=farcaster,base,telegram,github" alt="Integration">
+                            <span><strong>Integrations:</strong> Farcaster SDK · Neynar SDK · Base Pay · Telegram Bot API · Twitter API · GitHub workflows · Vercel · Goat SDK · Uniswap</span>
                         </div>
-                        <div class="skill-category">
-                            <h3>AI & Automation</h3>
-                            <div class="skill-item">
-                                <img src="https://skillicons.dev/icons?i=nodejs,python,openai" alt="AI">
-                                <span>Node.js · Python · Google Gemini · OpenAI · AI agents · Electron</span>
-                            </div>
+                        <div class="skill-row">
+                            <img src="https://skillicons.dev/icons?i=nodejs,python,openai" alt="AI">
+                            <span><strong>AI & Automation:</strong> Node.js · Python · Google Gemini · OpenAI · AI agents · Electron · Chess.js · Cannon-es</span>
                         </div>
-                        <div class="skill-category">
-                            <h3>Tools & Testing</h3>
-                            <div class="skill-item">
-                                <img src="https://skillicons.dev/icons?i=typescript,git,github" alt="Tools">
-                                <span>Vitest · Zod · PM2 · Sharp · P5.js · Recharts</span>
-                            </div>
+                        <div class="skill-row">
+                            <img src="https://skillicons.dev/icons?i=typescript,git,github" alt="Tools">
+                            <span><strong>Tools:</strong> Vitest · Zod · PM2 · Sharp · P5.js · Recharts · Privy</span>
                         </div>
                     </div>
                 </div>
@@ -89,10 +71,9 @@
             <section id="projects" class="tab-panel">
                 <header class="page-heading">
                     <h1>Projects</h1>
-                    <p class="lead">Clean entries inspired by wojtek: BadTraders and BushLeague/Gen1 only.</p>
                 </header>
                 <div class="project-grid">
-                    <article class="project-card">
+                    <article class="project-card" data-miniapp="https://badtraders.xyz" data-web="https://badtraders.xyz">
                         <div class="project-preview">
                             <iframe src="https://badtraders.xyz" frameborder="0" loading="lazy" class="preview-iframe"></iframe>
                         </div>
@@ -100,10 +81,9 @@
                             <p class="label">BadTraders</p>
                             <h2>badtraders.xyz</h2>
                             <p class="project-desc">Loss leaderboard tracking real-time trading performance on Base.</p>
-                            <a class="project-link" href="https://badtraders.xyz" data-miniapp="https://badtraders.xyz" data-web="https://badtraders.xyz" target="_blank" rel="noreferrer">Open BadTraders</a>
                         </div>
                     </article>
-                    <article class="project-card">
+                    <article class="project-card" data-miniapp="https://bushleague.xyz" data-web="https://bushleague.xyz">
                         <div class="project-preview">
                             <iframe src="https://bushleague.xyz" frameborder="0" loading="lazy" class="preview-iframe"></iframe>
                         </div>
@@ -111,7 +91,6 @@
                             <p class="label">BushLeague / Gen1</p>
                             <h2>bushleague.xyz</h2>
                             <p class="project-desc">AI-powered NFT minting with generative art and Base Pay integration.</p>
-                            <a class="project-link" href="https://bushleague.xyz" data-miniapp="https://bushleague.xyz" data-web="https://bushleague.xyz" target="_blank" rel="noreferrer">Open BushLeague</a>
                         </div>
                     </article>
                 </div>
@@ -145,6 +124,7 @@
                         isInFarcaster = await farcasterSDK.isInFarcaster();
 
                         if (isInFarcaster) {
+                            console.log('Farcaster mini-app detected');
                             // Enable back navigation
                             const capabilities = await farcasterSDK.getCapabilities();
                             if (capabilities.includes('back')) {
@@ -153,6 +133,7 @@
 
                             // Signal that the app is ready
                             await farcasterSDK.ready();
+                            console.log('Farcaster mini-app ready');
                         }
                     }
                 } catch (error) {
@@ -162,6 +143,13 @@
 
             async function initBaseAppSDK() {
                 try {
+                    // Check for Base App SDK
+                    if (window.baseApp) {
+                        isInBaseApp = true;
+                        console.log('Base App detected via SDK');
+                        return;
+                    }
+
                     // Detect Base App context via URL patterns, referrer, or user agent
                     const url = window.location.href.toLowerCase();
                     const referrer = document.referrer.toLowerCase();
@@ -175,7 +163,7 @@
                         // Check for Base App injected context
                         (window.parent !== window && referrer.includes('base'))) {
                         isInBaseApp = true;
-                        // Base App handles navigation automatically via manifest
+                        console.log('Base App detected via context');
                     }
                 } catch (error) {
                     console.log('Base App detection error:', error);
@@ -206,11 +194,15 @@
                 });
             });
 
-            // Context-aware project links (works for both Farcaster and Base App)
-            document.querySelectorAll('.project-link[data-miniapp]').forEach(link => {
-                link.addEventListener('click', async (e) => {
-                    const miniappUrl = link.getAttribute('data-miniapp');
-                    const webUrl = link.getAttribute('data-web');
+            // Context-aware project cards (entire card is clickable)
+            document.querySelectorAll('.project-card[data-miniapp]').forEach(card => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', async (e) => {
+                    // Don't trigger if clicking inside iframe
+                    if (e.target.closest('.preview-iframe')) return;
+
+                    const miniappUrl = card.getAttribute('data-miniapp');
+                    const webUrl = card.getAttribute('data-web');
                     const isInMiniApp = isInFarcaster || isInBaseApp;
 
                     if (isInMiniApp && miniappUrl) {
@@ -226,8 +218,7 @@
                         }
                     } else {
                         // Outside mini-app context, open in new tab
-                        link.href = webUrl;
-                        link.target = '_blank';
+                        window.open(webUrl, '_blank');
                     }
                 });
             });

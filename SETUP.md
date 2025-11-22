@@ -8,16 +8,32 @@
 
 Your site will be live at: **https://dutchiono.github.io/ionoi.eth.sucks**
 
-## ENS Domain Setup
+## ENS Domain Setup (IPFS Content Hash)
 
-1. Go to: https://app.ens.domains
-2. Connect your wallet
-3. Search for `ionoi.eth.sucks`
-4. Go to **Records** tab
-5. Add a **Text Record**:
-   - **Name:** `website`
-   - **Value:** `https://dutchiono.github.io/ionoi.eth.sucks`
-6. Save and confirm transaction
+Since `.eth.sucks` and `.eth.limo` domains only work with IPFS content hashes, we'll create a redirect page on IPFS:
+
+1. **Upload redirect page to IPFS:**
+   - Use Pinata, Infura, or any IPFS service
+   - Upload the `redirect.html` file from this repo
+   - Get the IPFS CID (e.g., `Qm...`)
+
+2. **Set Content Hash in ENS:**
+   - Go to: https://app.ens.domains
+   - Connect your wallet (the one that owns `ionoi.eth.sucks`)
+   - Search for `ionoi.eth.sucks` and select it
+   - Click on the **Records** tab
+   - Go to **Other** tab
+   - Find **Content Hash**
+   - Set it to: `/ipfs/YOUR_CID_HERE` (e.g., `/ipfs/Qm...`)
+   - Click **Save** and confirm the transaction
+
+3. **Alternative: Use Pinata:**
+   ```bash
+   # If you have Pinata CLI or use their web interface
+   # Upload redirect.html and get the CID
+   ```
+
+**Note:** The redirect page will automatically send visitors to your GitHub Pages site. This works for `.eth.sucks` and `.eth.limo` domains that require IPFS content hashes.
 
 ## Deploying Updates
 
