@@ -57,5 +57,6 @@
       "iconUrl": "https://dutchiono.github.io/ionoi.eth.sucks/icon.png",
       "splashImageUrl": "https://dutchiono.github.io/ionoi.eth.sucks/splash.png"
     }
-  ]
+  ],
+  "hostedManifestUrl": "https://api.farcaster.xyz/miniapps/hosted-manifest/019aacbb-0bde-ab63-260f-f6ed45e8abca"
 }
