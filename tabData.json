@@ -11,7 +11,7 @@
       "date": "Nov 18, 2025",
       "tag": "mini-app",
       "title": "Manifests stay light inside Farcaster frames",
-      "summary": "BadTraders, Gen1, and Cascade all keep their mini-app manifests pinstriped while Supabase / Redis keep the heavy lifting outside the frame.",
+      "summary": "BadTraders, Gen1, and Cascade all keep their mini-app manifests pinstriped while keeping the heavy lifting outside the frame.",
       "link": "https://github.com/MaxIndex/badtraders"
     },
     {
@@ -24,9 +24,9 @@
   "projects": [
     {
       "title": "BadTraders",
-      "tagline": "Loss leaderboard · Supabase",
-      "status": "Realtime leaderboard · Supabase + Redis cache",
-      "desc": "BadTraders keeps the leaderboard data outside of the frame, pumps Supabase rows with every trade, and pins the mini-app manifest for warp-speed Farcaster launches.",
+      "tagline": "Loss leaderboard",
+      "status": "Realtime leaderboard with caching",
+      "desc": "BadTraders keeps the leaderboard data outside of the frame, records every trade, and pins the mini-app manifest for warp-speed Farcaster launches.",
       "metrics": [
         "18K trades recorded",
         "3 live manifests",
