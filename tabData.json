@@ -90,6 +90,25 @@
           "href": "https://github.com/MaxIndex/CascadeProjects/blob/main/windsurf-project/convowithmax.md"
         }
       ]
+    },
+    {
+      "title": "Daemon Social",
+      "tagline": "Electron client · Farcaster-style",
+      "status": "Windows desktop app · Gateway + Hub + PDS",
+      "desc": "Daemon is a full-featured Windows Electron client for a decentralized social network, matching Farcaster's interface with feed, channels, profiles, and wallet integration.",
+      "metrics": [
+        "Windows installer build",
+        "Gateway + Hub + PDS architecture",
+        "MetaMask wallet integration"
+      ],
+      "webUrl": "https://daemon.bushleague.xyz",
+      "miniAppUrl": "https://daemon.bushleague.xyz",
+      "links": [
+        {
+          "label": "Client README",
+          "href": "https://github.com/dutchiono/daemon-client/blob/main/README.md"
+        }
+      ]
     }
   ]
 }
