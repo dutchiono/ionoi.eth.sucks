@@ -683,6 +683,31 @@ textarea:focus {
     min-height: 54px;
 }
 
+.rr-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: rgba(245, 244, 255, 0.86);
+    font-size: 0.8rem;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.rr-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+}
+
+.rr-sync-interval {
+    min-width: 160px;
+}
+
+.rr-sync-grid {
+    margin-top: 1rem;
+}
+
 @media (max-width: 768px) {
     .rr-team-list {
         grid-template-columns: 1fr;
