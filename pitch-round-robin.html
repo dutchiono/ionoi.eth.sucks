@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Round robin board for a Pitch tournament.">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <title>Pitch</title>
 </head>
 <body class="pitch-theme">
@@ -105,11 +106,18 @@
         <details class="rr-admin">
           <summary class="rr-admin__summary">Init (host only)</summary>
           <div class="rr-admin__body">
-            <p class="rr-hint">Optional: enable a shared board across phones. Otherwise, everything stays on this device.</p>
-            <div class="rr-row rr-between rr-row-wrap rr-row-gap">
-              <p id="syncStatus" class="rr-hint" style="margin:0;">Shared board not configured.</p>
+            <p class="rr-hint">Optional: turn this into a shared live board using Supabase. Guests only need the link you share.</p>
+
+            <div class="rr-field">
+              <label for="sbAnonKey">Supabase anon key (paste once)</label>
+              <input id="sbAnonKey" type="password" placeholder="eyJhbGciOi..." autocomplete="off">
+            </div>
+
+            <div class="rr-row rr-between rr-row-wrap rr-row-gap" style="margin-top: 0.75rem;">
+              <p id="boardStatus" class="rr-hint" style="margin:0;">Shared board: not connected.</p>
               <div class="rr-row rr-actions">
-                <button id="syncSetupBtn" class="rr-btn rr-btn-primary">Setup shared board</button>
+                <button id="createBoardBtn" class="rr-btn rr-btn-primary">Create shared board</button>
+                <button id="copyBoardLinkBtn" class="rr-btn" disabled>Copy link</button>
               </div>
             </div>
           </div>
@@ -122,49 +130,6 @@
     </footer>
   </div>
 
-  <!-- Shared board setup (host-only) -->
-  <div id="syncModal" class="rr-modal" aria-hidden="true">
-    <div class="rr-modal__panel" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
-      <div class="rr-modal__header">
-        <div>
-          <div id="syncModalTitle" class="rr-modal__title">Enable shared board</div>
-          <div class="rr-hint">Host-only setup.</div>
-        </div>
-        <button id="syncModalCloseBtn" class="rr-btn rr-btn-sm">Close</button>
-      </div>
-
-      <div class="rr-modal__body">
-        <div class="rr-card rr-card-muted">
-          <p class="rr-hint" style="margin-top:0;">
-            Writing requires a GitHub personal access token with permission to edit Gists. GitHub does not allow this to be auto-generated from typing team names.
-          </p>
-        </div>
-
-        <div class="rr-field">
-          <label for="syncTokenModal">GitHub token (stored on this device)</label>
-          <input id="syncTokenModal" type="password" placeholder="ghp_..." autocomplete="off">
-        </div>
-
-        <div class="rr-field">
-          <label for="syncGistIdModal">Board ID (leave blank to create)</label>
-          <input id="syncGistIdModal" type="text" placeholder="e.g. 0123456789abcdef..." autocomplete="off">
-        </div>
-
-        <div class="rr-field">
-          <label for="syncFileNameModal">File name</label>
-          <input id="syncFileNameModal" type="text" placeholder="pitch.json" autocomplete="off" value="pitch.json">
-        </div>
-      </div>
-
-      <div class="rr-modal__footer">
-        <button id="syncDisableBtn" class="rr-btn rr-btn-danger">Disable</button>
-        <div class="rr-modal__footer-spacer"></div>
-        <button id="syncUseExistingBtn" class="rr-btn">Use existing</button>
-        <button id="syncCreateAndEnableBtn" class="rr-btn rr-btn-primary">Create + enable</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     /**
      * Pitch Round Robin — single-file, no deps.
@@ -172,7 +137,6 @@
      */
     const STORAGE_KEY_V1 = "pitch_round_robin:v1";
     const STORAGE_KEY = "pitch_round_robin:v2";
-    const SYNC_KEY = "pitch_round_robin:sync:v1";
 
     function nowIso() {
       return new Date().toISOString();
@@ -241,28 +205,6 @@
 
     function saveState(state) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    function loadSyncSettings() {
-      try {
-        const raw = localStorage.getItem(SYNC_KEY);
-        if (!raw) {
-          return { gistId: "", token: "", fileName: "pitch.json", lastRemoteUpdatedAt: "" };
-        }
-        const parsed = JSON.parse(raw);
-        return {
-          gistId: safeText(parsed.gistId || ""),
-          token: safeText(parsed.token || ""),
-          fileName: safeText(parsed.fileName || "pitch.json") || "pitch.json",
-          lastRemoteUpdatedAt: safeText(parsed.lastRemoteUpdatedAt || ""),
-        };
-      } catch {
-        return { gistId: "", token: "", fileName: "pitch.json", lastRemoteUpdatedAt: "" };
-      }
-    }
-
-    function saveSyncSettings(settings) {
-      localStorage.setItem(SYNC_KEY, JSON.stringify(settings));
     }
 
     function defaultTournament() {
@@ -380,17 +322,14 @@
     }
 
     // ---------- UI ----------
+    const SUPABASE_URL = "https://kokgysuyqkxrvikjpdyg.supabase.co";
+    const SB_ANON_KEY_STORAGE = "pitch_supabase_anon_key:v1";
+
     const els = {
-      syncStatus: document.getElementById("syncStatus"),
-      syncSetupBtn: document.getElementById("syncSetupBtn"),
-      syncModal: document.getElementById("syncModal"),
-      syncModalCloseBtn: document.getElementById("syncModalCloseBtn"),
-      syncTokenModal: document.getElementById("syncTokenModal"),
-      syncGistIdModal: document.getElementById("syncGistIdModal"),
-      syncFileNameModal: document.getElementById("syncFileNameModal"),
-      syncUseExistingBtn: document.getElementById("syncUseExistingBtn"),
-      syncCreateAndEnableBtn: document.getElementById("syncCreateAndEnableBtn"),
-      syncDisableBtn: document.getElementById("syncDisableBtn"),
+      sbAnonKey: document.getElementById("sbAnonKey"),
+      boardStatus: document.getElementById("boardStatus"),
+      createBoardBtn: document.getElementById("createBoardBtn"),
+      copyBoardLinkBtn: document.getElementById("copyBoardLinkBtn"),
       addTeamBtn: document.getElementById("addTeamBtn"),
       generateBtn: document.getElementById("generateBtn"),
       resetResultsBtn: document.getElementById("resetResultsBtn"),
@@ -401,290 +340,261 @@
     };
 
     let state = loadState();
-    let sync = loadSyncSettings();
-    let autoPushTimer = null;
-    let autoPushPending = false;
-    let autoPushInFlight = false;
-
     if (!state.tournament) {
       state.tournament = defaultTournament();
       saveState(state);
+    }
+
+    let sb = null;
+    let board = { code: "", id: "" };
+    let channel = null;
+
+    let pushTimer = null;
+    let pushInFlight = false;
+    let pushPending = false;
+    let applyingRemote = false;
+
+    function getAnonKey() {
+      return safeText(localStorage.getItem(SB_ANON_KEY_STORAGE) || "").trim();
+    }
+
+    function setAnonKey(key) {
+      const k = safeText(key || "").trim();
+      if (!k) return;
+      localStorage.setItem(SB_ANON_KEY_STORAGE, k);
+    }
+
+    function setBoardStatus(msg) {
+      if (!els.boardStatus) return;
+      els.boardStatus.textContent = msg;
+    }
+
+    function readQuery() {
+      try {
+        return new URLSearchParams(window.location.search);
+      } catch {
+        return new URLSearchParams();
+      }
+    }
+
+    function readHashParams() {
+      const raw = safeText(window.location.hash || "").replace(/^#/, "");
+      const sp = new URLSearchParams(raw);
+      return sp;
+    }
+
+    function getBoardCodeFromUrl() {
+      const q = readQuery();
+      const h = readHashParams();
+      return (q.get("b") || h.get("b") || "").trim();
+    }
+
+    function pullAnonKeyFromUrlOnce() {
+      const q = readQuery();
+      const maybeKey = (q.get("k") || "").trim();
+      if (!maybeKey) return;
+      setAnonKey(maybeKey);
+      q.delete("k");
+      const next = q.toString();
+      const nextUrl = `${window.location.pathname}${next ? `?${next}` : ""}${window.location.hash || ""}`;
+      window.history.replaceState({}, "", nextUrl);
+    }
+
+    async function ensureSupabase() {
+      if (sb) return sb;
+      const anonKey = getAnonKey();
+      if (!anonKey) throw new Error("Missing Supabase anon key.");
+      if (!window.supabase || !window.supabase.createClient) throw new Error("Supabase SDK failed to load.");
+      sb = window.supabase.createClient(SUPABASE_URL, anonKey);
+      return sb;
+    }
+
+    async function ensureSession() {
+      const client = await ensureSupabase();
+      const { data } = await client.auth.getSession();
+      if (data?.session) return data.session;
+      const { error } = await client.auth.signInAnonymously();
+      if (error) throw error;
+      const after = await client.auth.getSession();
+      return after.data?.session || null;
+    }
+
+    function disconnectBoard() {
+      if (channel) {
+        sb?.removeChannel(channel);
+        channel = null;
+      }
+      board = { code: "", id: "" };
+      els.copyBoardLinkBtn.disabled = true;
+      setBoardStatus("Shared board: not connected.");
+    }
+
+    async function connectBoard(code) {
+      const c = safeText(code || "").trim();
+      if (!c) return;
+      const client = await ensureSupabase();
+      await ensureSession();
+
+      const { data, error } = await client.rpc("pitch_join_board", { p_code: c });
+      if (error) throw error;
+      if (!data || !data.code) throw new Error("Join failed.");
+
+      board = { code: safeText(data.code), id: safeText(data.id) };
+
+      applyingRemote = true;
+      state = data.state && typeof data.state === "object" ? data.state : state;
+      saveState(state);
+      rerender();
+      applyingRemote = false;
+
+      els.copyBoardLinkBtn.disabled = false;
+      setBoardStatus(`Shared board: connected (${board.code})`);
+
+      if (channel) client.removeChannel(channel);
+      channel = client
+        .channel(`pitch-board:${board.code}`)
+        .on(
+          "postgres_changes",
+          { event: "UPDATE", schema: "public", table: "pitch_boards", filter: `code=eq.${board.code}` },
+          (payload) => {
+            const next = payload?.new?.state;
+            if (!next || typeof next !== "object") return;
+            applyingRemote = true;
+            state = next;
+            saveState(state);
+            rerender();
+            applyingRemote = false;
+          }
+        )
+        .subscribe();
+    }
+
+    function schedulePush(delayMs = 450) {
+      if (!board.code) return;
+      if (!sb) return;
+      if (applyingRemote) return;
+      if (pushTimer) clearTimeout(pushTimer);
+      pushTimer = setTimeout(() => {
+        pushTimer = null;
+        pushNow().catch(() => {});
+      }, delayMs);
+    }
+
+    async function pushNow() {
+      if (!board.code) return;
+      if (applyingRemote) return;
+      const client = await ensureSupabase();
+      await ensureSession();
+
+      if (pushInFlight) {
+        pushPending = true;
+        return;
+      }
+      pushInFlight = true;
+      pushPending = false;
+      try {
+        const { error } = await client
+          .from("pitch_boards")
+          .update({ state })
+          .eq("code", board.code);
+        if (error) throw error;
+      } finally {
+        pushInFlight = false;
+        if (pushPending) {
+          pushPending = false;
+          schedulePush(250);
+        }
+      }
     }
 
     function persistTournament(tournament) {
       tournament.updatedAt = nowIso();
       state.tournament = tournament;
       saveState(state);
-      scheduleAutoPush({ reason: "tournament_change" });
+      schedulePush();
     }
 
-    function setSyncStatus(msg) {
-      els.syncStatus.textContent = msg;
+    async function createSharedBoardFromLocal() {
+      const client = await ensureSupabase();
+      await ensureSession();
+      const { data, error } = await client.rpc("pitch_create_board", { p_state: state });
+      if (error) throw error;
+      if (!data || !data.code) throw new Error("Create failed.");
+      await connectBoard(data.code);
+      return data.code;
     }
 
-    function applySyncStatus() {
-      const hasGist = Boolean(sync.gistId);
-      const hasToken = Boolean(sync.token);
-      if (!hasGist) {
-        setSyncStatus("Shared board not configured.");
+    function buildShareLink(code) {
+      const anonKey = getAnonKey();
+      const q = new URLSearchParams();
+      q.set("b", code);
+      // Include the anon key once so guests don't type anything; it is public.
+      q.set("k", anonKey);
+      return `${window.location.origin}${window.location.pathname}?${q.toString()}`;
+    }
+
+    async function copyText(text) {
+      const t = safeText(text || "");
+      if (!t) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(t);
         return;
       }
-      const remoteText = sync.lastRemoteUpdatedAt ? `Last remote update: ${new Date(sync.lastRemoteUpdatedAt).toLocaleString()}` : "Remote not fetched yet.";
-      const writeText = hasToken ? "Write: enabled" : "Write: disabled";
-      setSyncStatus(`Board: ${sync.gistId} · ${writeText} · ${remoteText}`);
+      const ta = document.createElement("textarea");
+      ta.value = t;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
     }
 
-    function githubHeaders(token) {
-      const headers = {
-        "Accept": "application/vnd.github+json",
-      };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-      return headers;
-    }
+    // Bootstrap shared-board config from URL (guests)
+    pullAnonKeyFromUrlOnce();
+    if (els.sbAnonKey) els.sbAnonKey.value = getAnonKey();
 
-    async function fetchGist(gistId, token) {
-      const res = await fetch(`https://api.github.com/gists/${encodeURIComponent(gistId)}`, {
-        method: "GET",
-        headers: githubHeaders(token),
+    const initialCode = getBoardCodeFromUrl();
+    if (initialCode) {
+      // Best effort — if key isn't present, it will stay local.
+      connectBoard(initialCode).catch(() => {
+        setBoardStatus("Shared board: not connected.");
       });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`GitHub GET gist failed (${res.status}): ${text}`);
-      }
-      return await res.json();
+    } else {
+      setBoardStatus("Shared board: not connected.");
     }
 
-    function extractGistFileContent(gistJson, fileName) {
-      const files = gistJson?.files || {};
-      const file = files[fileName] || null;
-      if (!file) {
-        const available = Object.keys(files);
-        throw new Error(`Gist does not contain "${fileName}". Available: ${available.length ? available.join(", ") : "(none)"}`);
-      }
-      const content = file.content;
-      if (typeof content !== "string") throw new Error(`Gist file "${fileName}" has no readable content.`);
-      return content;
-    }
+    // Host-only controls (bottom)
+    els.sbAnonKey?.addEventListener("input", () => {
+      setAnonKey(els.sbAnonKey.value);
+    });
 
-    function validateRemoteState(remote) {
-      if (!remote || typeof remote !== "object") return false;
-      // v2: { tournament: {...} }
-      if (remote.tournament && typeof remote.tournament === "object") return true;
-      // v1: { activeId, tournaments: [...] }
-      if (Array.isArray(remote.tournaments)) return true;
-      return false;
-    }
-
-    function coerceRemoteToV2(remote) {
-      if (remote?.tournament && typeof remote.tournament === "object") {
-        return { tournament: remote.tournament };
-      }
-      const migrated = migrateV1ToV2(remote);
-      if (migrated) return migrated;
-      return { tournament: defaultTournament() };
-    }
-
-    async function syncPull({ quiet = false } = {}) {
-      if (!sync.gistId) {
-        if (!quiet) alert("Shared board is not configured.");
-        return;
-      }
-      const gist = await fetchGist(sync.gistId, sync.token);
-      const content = extractGistFileContent(gist, sync.fileName || "pitch.json");
-      const remote = JSON.parse(content);
-      if (!validateRemoteState(remote)) throw new Error("Remote file JSON is not a valid Pitch state object.");
-
-      state = coerceRemoteToV2(remote);
-      saveState(state);
-
-      sync.lastRemoteUpdatedAt = safeText(gist.updated_at || "");
-      saveSyncSettings(sync);
-      rerender();
-      applySyncStatus();
-    }
-
-    async function syncPush() {
-      if (!sync.gistId) {
-        alert("Shared board is not configured.");
-        return;
-      }
-      if (!sync.token) {
-        alert("A GitHub token with gist permission is required to write to the shared board.");
-        return;
-      }
-
-      // Fetch remote first for conflict detection
-      const gist = await fetchGist(sync.gistId, sync.token);
-      const remoteUpdatedAt = safeText(gist.updated_at || "");
-      if (sync.lastRemoteUpdatedAt && remoteUpdatedAt && sync.lastRemoteUpdatedAt !== remoteUpdatedAt) {
-        const proceed = confirm("Remote gist changed since your last pull. Push anyway (may overwrite remote changes)?");
-        if (!proceed) return;
-      }
-
-      const fileName = sync.fileName || "pitch.json";
-      const body = {
-        files: {
-          [fileName]: { content: JSON.stringify(state, null, 2) },
-        },
-      };
-
-      const res = await fetch(`https://api.github.com/gists/${encodeURIComponent(sync.gistId)}`, {
-        method: "PATCH",
-        headers: {
-          ...githubHeaders(sync.token),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`GitHub PATCH gist failed (${res.status}): ${text}`);
-      }
-
-      const updated = await res.json();
-      sync.lastRemoteUpdatedAt = safeText(updated.updated_at || "");
-      saveSyncSettings(sync);
-      applySyncStatus();
-    }
-
-    async function syncCreateGist() {
-      if (!sync.token) {
-        alert("A GitHub token with gist permission is required to create a shared board.");
-        return;
-      }
-      const fileName = sync.fileName || "pitch.json";
-      const body = {
-        description: "Pitch tournament data (round robin board)",
-        public: false,
-        files: {
-          [fileName]: { content: JSON.stringify(state, null, 2) },
-        },
-      };
-
-      const res = await fetch("https://api.github.com/gists", {
-        method: "POST",
-        headers: {
-          ...githubHeaders(sync.token),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`GitHub POST gist failed (${res.status}): ${text}`);
-      }
-
-      const created = await res.json();
-      sync.gistId = safeText(created.id || "");
-      sync.lastRemoteUpdatedAt = safeText(created.updated_at || "");
-      saveSyncSettings(sync);
-      applySyncStatus();
-      alert(`Shared board created. Share this Board ID:\n\n${sync.gistId}`);
-    }
-
-    function clearLiveTimer() {
-      // polling removed (event-driven sync only)
-    }
-
-    function configureLiveUpdates() {
-      // polling removed (event-driven sync only)
-    }
-
-    function openSyncModal() {
-      els.syncTokenModal.value = sync.token || "";
-      els.syncGistIdModal.value = sync.gistId || "";
-      els.syncFileNameModal.value = sync.fileName || "pitch.json";
-      els.syncModal.setAttribute("aria-hidden", "false");
-      els.syncModal.classList.add("rr-modal--open");
-    }
-
-    function closeSyncModal() {
-      els.syncModal.setAttribute("aria-hidden", "true");
-      els.syncModal.classList.remove("rr-modal--open");
-    }
-
-    function scheduleAutoPush({ delayMs = 600 } = {}) {
-      if (!sync.gistId) return; // nothing to push to
-      if (!sync.token) return;  // can't write without token
-      if (autoPushTimer) clearTimeout(autoPushTimer);
-      autoPushTimer = setTimeout(() => {
-        autoPushTimer = null;
-        autoSyncPushLatest().catch(() => {
-          // status already updated inside
-        });
-      }, delayMs);
-    }
-
-    async function autoSyncPushLatest() {
-      if (!sync.gistId || !sync.token) return;
-      if (autoPushInFlight) {
-        autoPushPending = true;
-        return;
-      }
-      autoPushInFlight = true;
-      autoPushPending = false;
+    els.createBoardBtn?.addEventListener("click", async () => {
       try {
-        // Fetch remote and only push if local is newer (simple conflict avoidance)
-        const gist = await fetchGist(sync.gistId, sync.token);
-        const remoteUpdatedAt = safeText(gist.updated_at || "");
-
-        let remoteState = null;
-        try {
-          const content = extractGistFileContent(gist, sync.fileName || "pitch.json");
-          remoteState = coerceRemoteToV2(JSON.parse(content));
-        } catch {
-          remoteState = null;
-        }
-
-        const localUpdated = safeText(state?.tournament?.updatedAt || "");
-        const remoteUpdated = safeText(remoteState?.tournament?.updatedAt || "");
-
-        // If remote looks newer, adopt it (auto-pull) and skip pushing
-        if (remoteUpdated && (!localUpdated || new Date(remoteUpdated) > new Date(localUpdated))) {
-          state = remoteState;
-          saveState(state);
-          sync.lastRemoteUpdatedAt = remoteUpdatedAt;
-          saveSyncSettings(sync);
-          rerender();
-          applySyncStatus();
-          return;
-        }
-
-        // Otherwise push local
-        const fileName = sync.fileName || "pitch.json";
-        const body = {
-          files: {
-            [fileName]: { content: JSON.stringify(state, null, 2) },
-          },
-        };
-        const res = await fetch(`https://api.github.com/gists/${encodeURIComponent(sync.gistId)}`, {
-          method: "PATCH",
-          headers: {
-            ...githubHeaders(sync.token),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        });
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`Auto-sync failed (${res.status}): ${text}`);
-        }
-        const updated = await res.json();
-        sync.lastRemoteUpdatedAt = safeText(updated.updated_at || "");
-        saveSyncSettings(sync);
-        applySyncStatus();
+        if (els.sbAnonKey) setAnonKey(els.sbAnonKey.value);
+        setBoardStatus("Shared board: creating...");
+        const code = await createSharedBoardFromLocal();
+        setBoardStatus(`Shared board: connected (${code})`);
       } catch (e) {
-        setSyncStatus(`Sync error: ${safeText(e?.message || e)}`);
-      } finally {
-        autoPushInFlight = false;
-        if (autoPushPending) {
-          autoPushPending = false;
-          scheduleAutoPush({ delayMs: 600 });
-        }
+        setBoardStatus(`Shared board error: ${safeText(e?.message || e)}`);
       }
-    }
+    });
+
+    els.copyBoardLinkBtn?.addEventListener("click", async () => {
+      try {
+        if (!board.code) return;
+        await copyText(buildShareLink(board.code));
+        setBoardStatus(`Shared board: link copied (${board.code})`);
+      } catch {
+        setBoardStatus("Shared board: failed to copy link.");
+      }
+    });
+
+    // When returning to tab, pull latest once.
+    window.addEventListener("focus", () => {
+      if (!board.code) return;
+      connectBoard(board.code).catch(() => {});
+    });
 
     function renderTeams(tournament) {
       els.teamsContainer.innerHTML = "";
@@ -996,69 +906,6 @@
     }
 
     // ---------- Events ----------
-    els.syncSetupBtn.addEventListener("click", () => openSyncModal());
-    els.syncModalCloseBtn.addEventListener("click", () => closeSyncModal());
-    els.syncModal.addEventListener("click", (e) => {
-      if (e.target === els.syncModal) closeSyncModal();
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeSyncModal();
-    });
-
-    els.syncDisableBtn.addEventListener("click", () => {
-      sync = { gistId: "", token: "", fileName: "pitch.json", lastRemoteUpdatedAt: "" };
-      saveSyncSettings(sync);
-      applySyncStatus();
-      closeSyncModal();
-    });
-
-    els.syncUseExistingBtn.addEventListener("click", async () => {
-      sync.token = els.syncTokenModal.value.trim();
-      sync.gistId = els.syncGistIdModal.value.trim();
-      sync.fileName = els.syncFileNameModal.value.trim() || "pitch.json";
-      saveSyncSettings(sync);
-      applySyncStatus();
-
-      if (!sync.gistId) {
-        alert("Paste a Board ID, or use Create + enable.");
-        return;
-      }
-
-      // Pull immediately so everyone starts from the same board
-      try {
-        await syncPull({ quiet: true });
-      } catch (e) {
-        setSyncStatus(`Sync setup error: ${safeText(e?.message || e)}`);
-      } finally {
-        closeSyncModal();
-      }
-    });
-
-    els.syncCreateAndEnableBtn.addEventListener("click", async () => {
-      sync.token = els.syncTokenModal.value.trim();
-      sync.gistId = els.syncGistIdModal.value.trim();
-      sync.fileName = els.syncFileNameModal.value.trim() || "pitch.json";
-      saveSyncSettings(sync);
-      applySyncStatus();
-
-      try {
-        if (sync.gistId) {
-          // Existing board ID provided: just pull and enable
-          await syncPull({ quiet: true });
-        } else {
-          // Create new shared board from current local state
-          await syncCreateGist();
-        }
-        // Push right away to ensure remote exists/has latest
-        scheduleAutoPush({ delayMs: 250 });
-      } catch (e) {
-        setSyncStatus(`Sync setup error: ${safeText(e?.message || e)}`);
-        alert(`Sync setup failed:\n\n${safeText(e?.message || e)}`);
-      } finally {
-        closeSyncModal();
-      }
-    });
-
     els.addTeamBtn.addEventListener("click", () => {
       const t = state.tournament;
       if (!t) return;
@@ -1093,15 +940,7 @@
       persistTournament(t);
       rerender();
     });
-
-    applySyncStatus();
     rerender();
-
-    // Event-driven refresh: when you come back to the tab, pull once.
-    window.addEventListener("focus", () => {
-      if (!sync.gistId) return;
-      syncPull({ quiet: true }).catch(() => {});
-    });
   </script>
 </body>
 </html>
