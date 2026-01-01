@@ -32,23 +32,6 @@
           </h1>
         </header>
         <p class="lead">Enter teams + players, auto-generate a round robin schedule, and record scores. Everything saves locally in your browser.</p>
-        <div class="rr-row rr-row-wrap rr-row-gap" style="margin-top: 1.25rem;">
-          <div class="rr-field rr-grow">
-            <label for="tournamentName">Tournament name</label>
-            <input id="tournamentName" type="text" placeholder="e.g. Friday Night Pitch" autocomplete="off">
-          </div>
-        </div>
-        <p id="tournamentHint" class="rr-hint"></p>
-
-        <div class="rr-row rr-between rr-row-wrap rr-row-gap" style="margin-top: 1.25rem;">
-          <div>
-            <div class="rr-h2" style="font-size: 1.05rem;">Sync</div>
-            <p id="syncStatus" class="rr-hint">Sync not configured.</p>
-          </div>
-          <div class="rr-row rr-actions">
-            <button id="syncSetupBtn" class="rr-btn rr-btn-primary">Setup sync</button>
-          </div>
-        </div>
       </section>
 
       <section class="section">
@@ -116,6 +99,22 @@
 
         <div id="scheduleContainer"></div>
       </section>
+
+      <!-- Host-only / one-time setup. Kept at bottom and collapsed. -->
+      <section class="section rr-admin-section">
+        <details class="rr-admin">
+          <summary class="rr-admin__summary">Init (host only)</summary>
+          <div class="rr-admin__body">
+            <p class="rr-hint">Optional: enable a shared board across phones. Otherwise, everything stays on this device.</p>
+            <div class="rr-row rr-between rr-row-wrap rr-row-gap">
+              <p id="syncStatus" class="rr-hint" style="margin:0;">Shared board not configured.</p>
+              <div class="rr-row rr-actions">
+                <button id="syncSetupBtn" class="rr-btn rr-btn-primary">Setup shared board</button>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
     </main>
 
     <footer class="footer">
@@ -123,13 +122,13 @@
     </footer>
   </div>
 
-  <!-- Sync setup (kept simple for mobile) -->
+  <!-- Shared board setup (host-only) -->
   <div id="syncModal" class="rr-modal" aria-hidden="true">
     <div class="rr-modal__panel" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
       <div class="rr-modal__header">
         <div>
-          <div id="syncModalTitle" class="rr-modal__title">Enable sync</div>
-          <div class="rr-hint">This shares one board across phones using a GitHub Gist.</div>
+          <div id="syncModalTitle" class="rr-modal__title">Enable shared board</div>
+          <div class="rr-hint">Host-only setup.</div>
         </div>
         <button id="syncModalCloseBtn" class="rr-btn rr-btn-sm">Close</button>
       </div>
@@ -137,17 +136,17 @@
       <div class="rr-modal__body">
         <div class="rr-card rr-card-muted">
           <p class="rr-hint" style="margin-top:0;">
-            Writing requires a GitHub token with <strong>gist</strong> permission. Each phone that edits scores needs its own token.
+            Writing requires a GitHub personal access token with permission to edit Gists. GitHub does not allow this to be auto-generated from typing team names.
           </p>
         </div>
 
         <div class="rr-field">
-          <label for="syncTokenModal">GitHub token (stored on this phone)</label>
+          <label for="syncTokenModal">GitHub token (stored on this device)</label>
           <input id="syncTokenModal" type="password" placeholder="ghp_..." autocomplete="off">
         </div>
 
         <div class="rr-field">
-          <label for="syncGistIdModal">Gist ID (leave blank to create)</label>
+          <label for="syncGistIdModal">Board ID (leave blank to create)</label>
           <input id="syncGistIdModal" type="text" placeholder="e.g. 0123456789abcdef..." autocomplete="off">
         </div>
 
@@ -392,8 +391,6 @@
       syncUseExistingBtn: document.getElementById("syncUseExistingBtn"),
       syncCreateAndEnableBtn: document.getElementById("syncCreateAndEnableBtn"),
       syncDisableBtn: document.getElementById("syncDisableBtn"),
-      tournamentName: document.getElementById("tournamentName"),
-      tournamentHint: document.getElementById("tournamentHint"),
       addTeamBtn: document.getElementById("addTeamBtn"),
       generateBtn: document.getElementById("generateBtn"),
       resetResultsBtn: document.getElementById("resetResultsBtn"),
@@ -429,11 +426,11 @@
       const hasGist = Boolean(sync.gistId);
       const hasToken = Boolean(sync.token);
       if (!hasGist) {
-        setSyncStatus("Sync not configured.");
+        setSyncStatus("Shared board not configured.");
         return;
       }
       const remoteText = sync.lastRemoteUpdatedAt ? `Last remote update: ${new Date(sync.lastRemoteUpdatedAt).toLocaleString()}` : "Remote not fetched yet.";
-      const writeText = hasToken ? "Write: enabled" : "Write: disabled (token missing)";
+      const writeText = hasToken ? "Write: enabled" : "Write: disabled";
       setSyncStatus(`Board: ${sync.gistId} · ${writeText} · ${remoteText}`);
     }
 
@@ -489,7 +486,7 @@
 
     async function syncPull({ quiet = false } = {}) {
       if (!sync.gistId) {
-        if (!quiet) alert("Set a Gist ID to pull from.");
+        if (!quiet) alert("Shared board is not configured.");
         return;
       }
       const gist = await fetchGist(sync.gistId, sync.token);
@@ -508,11 +505,11 @@
 
     async function syncPush() {
       if (!sync.gistId) {
-        alert("No Gist ID set. Click “Create gist” first, or paste an existing Gist ID.");
+        alert("Shared board is not configured.");
         return;
       }
       if (!sync.token) {
-        alert("A GitHub token with gist permission is required to push.");
+        alert("A GitHub token with gist permission is required to write to the shared board.");
         return;
       }
 
@@ -553,7 +550,7 @@
 
     async function syncCreateGist() {
       if (!sync.token) {
-        alert("A GitHub token with gist permission is required to create a gist.");
+        alert("A GitHub token with gist permission is required to create a shared board.");
         return;
       }
       const fileName = sync.fileName || "pitch.json";
@@ -584,7 +581,7 @@
       sync.lastRemoteUpdatedAt = safeText(created.updated_at || "");
       saveSyncSettings(sync);
       applySyncStatus();
-      alert(`Shared board created. Share this Board ID with others:\n\n${sync.gistId}`);
+      alert(`Shared board created. Share this Board ID:\n\n${sync.gistId}`);
     }
 
     function clearLiveTimer() {
@@ -689,13 +686,6 @@
       }
     }
 
-    function renderTournamentHeader(tournament) {
-      els.tournamentName.value = tournament.name || "";
-      const updated = tournament.updatedAt ? new Date(tournament.updatedAt).toLocaleString() : "";
-      const created = tournament.createdAt ? new Date(tournament.createdAt).toLocaleString() : "";
-      els.tournamentHint.textContent = `Created: ${created} · Updated: ${updated} · Teams: ${tournament.teams.length} · Matches: ${tournament.schedule.length}`;
-    }
-
     function renderTeams(tournament) {
       els.teamsContainer.innerHTML = "";
       if (tournament.teams.length === 0) {
@@ -728,8 +718,6 @@
         nameInput.addEventListener("input", () => {
           team.name = nameInput.value;
           persistTournament(tournament);
-          renderTournamentSelect();
-          renderTournamentHeader(tournament);
           renderStandings(tournament);
           renderNextMatch(tournament);
           renderSchedule(tournament);
@@ -1001,7 +989,6 @@
     function rerender() {
       const tournament = state.tournament;
       if (!tournament) return;
-      renderTournamentHeader(tournament);
       renderTeams(tournament);
       renderNextMatch(tournament);
       renderStandings(tournament);
@@ -1033,7 +1020,7 @@
       applySyncStatus();
 
       if (!sync.gistId) {
-        alert("Paste a Board ID (Gist ID), or use Create + enable.");
+        alert("Paste a Board ID, or use Create + enable.");
         return;
       }
 
@@ -1070,14 +1057,6 @@
       } finally {
         closeSyncModal();
       }
-    });
-
-    els.tournamentName.addEventListener("input", () => {
-      const t = state.tournament;
-      if (!t) return;
-      t.name = els.tournamentName.value;
-      persistTournament(t);
-      renderTournamentHeader(t);
     });
 
     els.addTeamBtn.addEventListener("click", () => {
