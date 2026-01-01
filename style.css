@@ -1,4 +1,4 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap");
 
 :root {
     font-family: "Space Grotesk", system-ui, sans-serif;
@@ -420,5 +420,299 @@ body {
 
     .project-preview {
         height: 140px;
+    }
+}
+
+/* ------------------------------
+   Pitch round robin page styles
+   ------------------------------ */
+.pitch-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.pitch-suits {
+    font-size: 1.2rem;
+    letter-spacing: 0.25rem;
+    opacity: 0.85;
+}
+
+.pitch-suits {
+    color: rgba(245, 244, 255, 0.78);
+    text-shadow: 0 0 18px rgba(58, 221, 194, 0.25);
+}
+
+/* Card-table background vibe for "section" blocks */
+.section {
+    position: relative;
+}
+
+.section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.22;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(58, 221, 194, 0.18), transparent 45%),
+      radial-gradient(circle at 80% 90%, rgba(180, 110, 255, 0.12), transparent 50%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent 60%);
+}
+
+.rr-row {
+    display: flex;
+    align-items: center;
+}
+
+.rr-row-wrap {
+    flex-wrap: wrap;
+}
+
+.rr-row-gap {
+    gap: 1rem;
+}
+
+.rr-between {
+    justify-content: space-between;
+}
+
+.rr-grow {
+    flex: 1;
+    min-width: 220px;
+}
+
+.rr-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.rr-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 160px;
+}
+
+.rr-h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    letter-spacing: 0.02rem;
+}
+
+.rr-hint {
+    margin: 0.4rem 0 0;
+    color: var(--muted);
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.rr-btn {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text);
+    padding: 0.6rem 0.9rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+
+.rr-btn:hover {
+    border-color: rgba(58, 221, 194, 0.55);
+    background: rgba(58, 221, 194, 0.08);
+    transform: translateY(-1px);
+}
+
+.rr-btn:active {
+    transform: translateY(0);
+}
+
+.rr-btn-primary {
+    border-color: rgba(58, 221, 194, 0.55);
+    background: rgba(58, 221, 194, 0.14);
+}
+
+.rr-btn-danger {
+    border-color: rgba(255, 90, 120, 0.55);
+    background: rgba(255, 90, 120, 0.12);
+}
+
+.rr-btn-warn {
+    border-color: rgba(255, 204, 102, 0.55);
+    background: rgba(255, 204, 102, 0.12);
+}
+
+.rr-btn-sm {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.06rem;
+}
+
+.rr-team-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.rr-card {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.05), transparent 40%),
+      linear-gradient(145deg, rgba(16, 11, 37, 0.92), rgba(9, 6, 20, 0.94));
+    border-radius: 18px;
+    padding: 1.1rem;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+}
+
+.rr-card-muted {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.09);
+    box-shadow: none;
+}
+
+.rr-round-title,
+.rr-next-title {
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.06rem;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+}
+
+.rr-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.rr-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.rr-table th,
+.rr-table td {
+    padding: 0.75rem 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.rr-table th {
+    color: rgba(245, 244, 255, 0.9);
+    background: rgba(255, 255, 255, 0.03);
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+
+.rr-table tr:last-child td {
+    border-bottom: none;
+}
+
+.rr-table td strong {
+    color: var(--text);
+}
+
+.rr-col-score {
+    width: 90px;
+}
+
+.rr-actions-cell {
+    width: 170px;
+    white-space: nowrap;
+}
+
+.rr-score {
+    width: 72px;
+}
+
+.rr-empty-td {
+    color: var(--muted);
+}
+
+/* Form elements (scoped via rr- wrappers) */
+.rr-field label,
+.rr-card label {
+    color: rgba(245, 244, 255, 0.86);
+    font-size: 0.75rem;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+}
+
+.rr-field input,
+.rr-card input,
+.rr-card textarea,
+.rr-card select,
+select,
+input,
+textarea {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 0.7rem 0.75rem;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.rr-field input:focus,
+.rr-card input:focus,
+.rr-card textarea:focus,
+.rr-card select:focus,
+select:focus,
+input:focus,
+textarea:focus {
+    border-color: rgba(58, 221, 194, 0.7);
+    background: rgba(58, 221, 194, 0.06);
+}
+
+.rr-card textarea {
+    resize: vertical;
+    min-height: 54px;
+}
+
+.rr-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: rgba(245, 244, 255, 0.86);
+    font-size: 0.8rem;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.rr-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+}
+
+.rr-sync-interval {
+    min-width: 160px;
+}
+
+.rr-sync-grid {
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .rr-team-list {
+        grid-template-columns: 1fr;
+    }
+    .rr-actions-cell {
+        width: auto;
     }
 }

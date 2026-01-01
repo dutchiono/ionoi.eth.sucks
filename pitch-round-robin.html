@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Round robin board for a Pitch cards tournament.">
   <link rel="stylesheet" href="style.css">
-  <title>Pitch Round Robin</title>
+  <title>Pitch</title>
 </head>
 <body>
   <div class="page">
@@ -13,16 +13,59 @@
       <a class="logo" href="index.html"><img src="dutchgif.gif" alt="dutch" class="logo-gif"></a>
       <div class="tab-links">
         <a class="tab" href="index.html">Home</a>
-        <a class="tab active" href="pitch-round-robin.html">Pitch RR</a>
+        <a class="tab active" href="pitch-round-robin.html">Pitch</a>
       </div>
     </nav>
 
     <main class="content">
       <section class="section">
         <header class="page-heading">
-          <h1>Pitch — Round Robin Board</h1>
+          <h1 class="pitch-title">Pitch <span class="pitch-suits" aria-hidden="true">♠ ♥ ♦ ♣</span></h1>
         </header>
         <p class="lead">Create a tournament, enter teams + players, auto-generate a round robin schedule, and record scores. Everything saves locally in your browser.</p>
+      </section>
+
+      <section class="section">
+        <div class="rr-row rr-between rr-row-wrap rr-row-gap">
+          <div>
+            <h2 class="rr-h2">GitHub Sync</h2>
+            <p class="rr-hint">Optional. Sync tournaments across devices via a GitHub Gist file. Writing requires a GitHub token with <strong>gist</strong> permission.</p>
+          </div>
+          <div class="rr-row rr-actions">
+            <button id="syncPullBtn" class="rr-btn">Pull</button>
+            <button id="syncPushBtn" class="rr-btn rr-btn-primary">Push</button>
+            <button id="syncCreateBtn" class="rr-btn rr-btn-warn">Create gist</button>
+          </div>
+        </div>
+
+        <div class="rr-row rr-row-wrap rr-row-gap rr-sync-grid">
+          <div class="rr-field rr-grow">
+            <label for="syncGistId">Gist ID</label>
+            <input id="syncGistId" type="text" placeholder="e.g. 0123456789abcdef..." autocomplete="off">
+          </div>
+          <div class="rr-field rr-grow">
+            <label for="syncFileName">File name (inside gist)</label>
+            <input id="syncFileName" type="text" placeholder="pitch.json" autocomplete="off">
+          </div>
+          <div class="rr-field rr-grow">
+            <label for="syncToken">GitHub token (stored in this browser)</label>
+            <input id="syncToken" type="password" placeholder="ghp_..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="rr-row rr-row-wrap rr-row-gap rr-between">
+          <div class="rr-row rr-row-wrap rr-row-gap">
+            <label class="rr-check">
+              <input id="syncLiveToggle" type="checkbox">
+              <span>Live updates (poll)</span>
+            </label>
+            <div class="rr-field rr-sync-interval">
+              <label for="syncInterval">Poll (seconds)</label>
+              <input id="syncInterval" type="number" min="3" step="1" value="8">
+            </div>
+          </div>
+          <div id="syncStatus" class="rr-hint"></div>
+        </div>
       </section>
 
       <section class="section">
@@ -122,6 +165,7 @@
      * Data persists in localStorage under STORAGE_KEY.
      */
     const STORAGE_KEY = "pitch_round_robin:v1";
+    const SYNC_KEY = "pitch_round_robin:sync:v1";
 
     function nowIso() {
       return new Date().toISOString();
@@ -173,6 +217,30 @@
 
     function saveState(state) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadSyncSettings() {
+      try {
+        const raw = localStorage.getItem(SYNC_KEY);
+        if (!raw) {
+          return { gistId: "", token: "", fileName: "pitch.json", live: false, intervalSec: 8, lastRemoteUpdatedAt: "" };
+        }
+        const parsed = JSON.parse(raw);
+        return {
+          gistId: safeText(parsed.gistId || ""),
+          token: safeText(parsed.token || ""),
+          fileName: safeText(parsed.fileName || "pitch.json") || "pitch.json",
+          live: Boolean(parsed.live),
+          intervalSec: Math.max(3, clampInt(parsed.intervalSec, 8)),
+          lastRemoteUpdatedAt: safeText(parsed.lastRemoteUpdatedAt || ""),
+        };
+      } catch {
+        return { gistId: "", token: "", fileName: "pitch.json", live: false, intervalSec: 8, lastRemoteUpdatedAt: "" };
+      }
+    }
+
+    function saveSyncSettings(settings) {
+      localStorage.setItem(SYNC_KEY, JSON.stringify(settings));
     }
 
     function defaultTournament() {
@@ -308,6 +376,15 @@
 
     // ---------- UI ----------
     const els = {
+      syncGistId: document.getElementById("syncGistId"),
+      syncFileName: document.getElementById("syncFileName"),
+      syncToken: document.getElementById("syncToken"),
+      syncPullBtn: document.getElementById("syncPullBtn"),
+      syncPushBtn: document.getElementById("syncPushBtn"),
+      syncCreateBtn: document.getElementById("syncCreateBtn"),
+      syncLiveToggle: document.getElementById("syncLiveToggle"),
+      syncInterval: document.getElementById("syncInterval"),
+      syncStatus: document.getElementById("syncStatus"),
       tournamentSelect: document.getElementById("tournamentSelect"),
       tournamentName: document.getElementById("tournamentName"),
       tournamentHint: document.getElementById("tournamentHint"),
@@ -324,6 +401,10 @@
     };
 
     let state = loadState();
+    let sync = loadSyncSettings();
+    let liveTimer = null;
+    let liveInFlight = false;
+
     if (state.tournaments.length === 0) {
       const t = defaultTournament();
       upsertTournament(state, t);
@@ -337,6 +418,188 @@
       tournament.updatedAt = nowIso();
       upsertTournament(state, tournament);
       saveState(state);
+    }
+
+    function setSyncStatus(msg) {
+      els.syncStatus.textContent = msg;
+    }
+
+    function applySyncSettingsToUI() {
+      els.syncGistId.value = sync.gistId || "";
+      els.syncFileName.value = sync.fileName || "pitch.json";
+      els.syncToken.value = sync.token || "";
+      els.syncLiveToggle.checked = Boolean(sync.live);
+      els.syncInterval.value = String(sync.intervalSec || 8);
+      const gistText = sync.gistId ? `Gist: ${sync.gistId}` : "No gist configured.";
+      const remoteText = sync.lastRemoteUpdatedAt ? `Remote updated: ${new Date(sync.lastRemoteUpdatedAt).toLocaleString()}` : "Remote not fetched yet.";
+      setSyncStatus(`${gistText} · ${remoteText}`);
+    }
+
+    function githubHeaders(token) {
+      const headers = {
+        "Accept": "application/vnd.github+json",
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      return headers;
+    }
+
+    async function fetchGist(gistId, token) {
+      const res = await fetch(`https://api.github.com/gists/${encodeURIComponent(gistId)}`, {
+        method: "GET",
+        headers: githubHeaders(token),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`GitHub GET gist failed (${res.status}): ${text}`);
+      }
+      return await res.json();
+    }
+
+    function extractGistFileContent(gistJson, fileName) {
+      const files = gistJson?.files || {};
+      const file = files[fileName] || null;
+      if (!file) {
+        const available = Object.keys(files);
+        throw new Error(`Gist does not contain "${fileName}". Available: ${available.length ? available.join(", ") : "(none)"}`);
+      }
+      const content = file.content;
+      if (typeof content !== "string") throw new Error(`Gist file "${fileName}" has no readable content.`);
+      return content;
+    }
+
+    function validateRemoteState(remote) {
+      if (!remote || typeof remote !== "object") return false;
+      if (!Array.isArray(remote.tournaments)) return false;
+      return true;
+    }
+
+    async function syncPull({ quiet = false } = {}) {
+      if (!sync.gistId) {
+        if (!quiet) alert("Set a Gist ID to pull from.");
+        return;
+      }
+      const gist = await fetchGist(sync.gistId, sync.token);
+      const content = extractGistFileContent(gist, sync.fileName || "pitch.json");
+      const remote = JSON.parse(content);
+      if (!validateRemoteState(remote)) throw new Error("Remote file JSON is not a valid Pitch state object.");
+
+      state = remote;
+      saveState(state);
+
+      sync.lastRemoteUpdatedAt = safeText(gist.updated_at || "");
+      saveSyncSettings(sync);
+      rerender();
+      applySyncSettingsToUI();
+    }
+
+    async function syncPush() {
+      if (!sync.gistId) {
+        alert("No Gist ID set. Click “Create gist” first, or paste an existing Gist ID.");
+        return;
+      }
+      if (!sync.token) {
+        alert("A GitHub token with gist permission is required to push.");
+        return;
+      }
+
+      // Fetch remote first for conflict detection
+      const gist = await fetchGist(sync.gistId, sync.token);
+      const remoteUpdatedAt = safeText(gist.updated_at || "");
+      if (sync.lastRemoteUpdatedAt && remoteUpdatedAt && sync.lastRemoteUpdatedAt !== remoteUpdatedAt) {
+        const proceed = confirm("Remote gist changed since your last pull. Push anyway (may overwrite remote changes)?");
+        if (!proceed) return;
+      }
+
+      const fileName = sync.fileName || "pitch.json";
+      const body = {
+        files: {
+          [fileName]: { content: JSON.stringify(state, null, 2) },
+        },
+      };
+
+      const res = await fetch(`https://api.github.com/gists/${encodeURIComponent(sync.gistId)}`, {
+        method: "PATCH",
+        headers: {
+          ...githubHeaders(sync.token),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`GitHub PATCH gist failed (${res.status}): ${text}`);
+      }
+
+      const updated = await res.json();
+      sync.lastRemoteUpdatedAt = safeText(updated.updated_at || "");
+      saveSyncSettings(sync);
+      applySyncSettingsToUI();
+    }
+
+    async function syncCreateGist() {
+      if (!sync.token) {
+        alert("A GitHub token with gist permission is required to create a gist.");
+        return;
+      }
+      const fileName = sync.fileName || "pitch.json";
+      const body = {
+        description: "Pitch tournament data (round robin board)",
+        public: false,
+        files: {
+          [fileName]: { content: JSON.stringify(state, null, 2) },
+        },
+      };
+
+      const res = await fetch("https://api.github.com/gists", {
+        method: "POST",
+        headers: {
+          ...githubHeaders(sync.token),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`GitHub POST gist failed (${res.status}): ${text}`);
+      }
+
+      const created = await res.json();
+      sync.gistId = safeText(created.id || "");
+      sync.lastRemoteUpdatedAt = safeText(created.updated_at || "");
+      saveSyncSettings(sync);
+      applySyncSettingsToUI();
+      alert(`Gist created. Share this Gist ID with others so they can pull the same data:\n\n${sync.gistId}`);
+    }
+
+    function clearLiveTimer() {
+      if (liveTimer) {
+        clearInterval(liveTimer);
+        liveTimer = null;
+      }
+    }
+
+    function configureLiveUpdates() {
+      clearLiveTimer();
+      if (!sync.live) return;
+      const intervalMs = Math.max(3000, (sync.intervalSec || 8) * 1000);
+      liveTimer = setInterval(async () => {
+        if (!sync.gistId) return;
+        if (liveInFlight) return;
+        liveInFlight = true;
+        try {
+          const gist = await fetchGist(sync.gistId, sync.token);
+          const remoteUpdatedAt = safeText(gist.updated_at || "");
+          if (sync.lastRemoteUpdatedAt && remoteUpdatedAt && remoteUpdatedAt === sync.lastRemoteUpdatedAt) return;
+          await syncPull({ quiet: true });
+        } catch (e) {
+          // Keep polling; surface last error
+          setSyncStatus(`Live update error: ${safeText(e?.message || e)}`);
+        } finally {
+          liveInFlight = false;
+        }
+      }, intervalMs);
     }
 
     function renderTournamentSelect() {
@@ -672,6 +935,66 @@
     }
 
     // ---------- Events ----------
+    els.syncGistId.addEventListener("input", () => {
+      sync.gistId = els.syncGistId.value.trim();
+      saveSyncSettings(sync);
+      applySyncSettingsToUI();
+      configureLiveUpdates();
+    });
+    els.syncFileName.addEventListener("input", () => {
+      sync.fileName = els.syncFileName.value.trim() || "pitch.json";
+      saveSyncSettings(sync);
+      applySyncSettingsToUI();
+    });
+    els.syncToken.addEventListener("input", () => {
+      sync.token = els.syncToken.value.trim();
+      saveSyncSettings(sync);
+      applySyncSettingsToUI();
+      configureLiveUpdates();
+    });
+    els.syncInterval.addEventListener("input", () => {
+      sync.intervalSec = Math.max(3, clampInt(els.syncInterval.value, 8));
+      saveSyncSettings(sync);
+      applySyncSettingsToUI();
+      configureLiveUpdates();
+    });
+    els.syncLiveToggle.addEventListener("change", () => {
+      sync.live = Boolean(els.syncLiveToggle.checked);
+      saveSyncSettings(sync);
+      applySyncSettingsToUI();
+      configureLiveUpdates();
+    });
+    els.syncPullBtn.addEventListener("click", async () => {
+      try {
+        setSyncStatus("Pulling from GitHub...");
+        await syncPull();
+        setSyncStatus("Pulled successfully.");
+      } catch (e) {
+        setSyncStatus(`Pull failed: ${safeText(e?.message || e)}`);
+        alert(`Pull failed:\n\n${safeText(e?.message || e)}`);
+      }
+    });
+    els.syncPushBtn.addEventListener("click", async () => {
+      try {
+        setSyncStatus("Pushing to GitHub...");
+        await syncPush();
+        setSyncStatus("Pushed successfully.");
+      } catch (e) {
+        setSyncStatus(`Push failed: ${safeText(e?.message || e)}`);
+        alert(`Push failed:\n\n${safeText(e?.message || e)}`);
+      }
+    });
+    els.syncCreateBtn.addEventListener("click", async () => {
+      try {
+        setSyncStatus("Creating gist...");
+        await syncCreateGist();
+        setSyncStatus("Gist created.");
+      } catch (e) {
+        setSyncStatus(`Create failed: ${safeText(e?.message || e)}`);
+        alert(`Create gist failed:\n\n${safeText(e?.message || e)}`);
+      }
+    });
+
     els.tournamentSelect.addEventListener("change", () => {
       state.activeId = els.tournamentSelect.value;
       saveState(state);
@@ -754,6 +1077,8 @@
       rerender();
     });
 
+    applySyncSettingsToUI();
+    configureLiveUpdates();
     rerender();
   </script>
 </body>
