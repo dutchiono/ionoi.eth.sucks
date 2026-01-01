@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Round robin board for a Pitch cards tournament.">
+  <link rel="stylesheet" href="style.css">
+  <title>Pitch Round Robin</title>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <a class="logo" href="index.html"><img src="dutchgif.gif" alt="dutch" class="logo-gif"></a>
+      <div class="tab-links">
+        <a class="tab" href="index.html">Home</a>
+        <a class="tab active" href="pitch-round-robin.html">Pitch RR</a>
+      </div>
+    </nav>
+
+    <main class="content">
+      <section class="section">
+        <header class="page-heading">
+          <h1>Pitch — Round Robin Board</h1>
+        </header>
+        <p class="lead">Create a tournament, enter teams + players, auto-generate a round robin schedule, and record scores. Everything saves locally in your browser.</p>
+      </section>
+
+      <section class="section">
+        <div class="rr-row rr-row-wrap rr-row-gap">
+          <div class="rr-field">
+            <label for="tournamentSelect">Tournament</label>
+            <select id="tournamentSelect"></select>
+          </div>
+          <div class="rr-field rr-grow">
+            <label for="tournamentName">Name</label>
+            <input id="tournamentName" type="text" placeholder="e.g. Friday Night Pitch" autocomplete="off">
+          </div>
+          <div class="rr-row rr-actions">
+            <button id="newTournamentBtn" class="rr-btn">New</button>
+            <button id="saveTournamentBtn" class="rr-btn rr-btn-primary">Save</button>
+            <button id="deleteTournamentBtn" class="rr-btn rr-btn-danger">Delete</button>
+          </div>
+        </div>
+        <p id="tournamentHint" class="rr-hint"></p>
+      </section>
+
+      <section class="section">
+        <div class="rr-row rr-row-wrap rr-row-gap rr-between">
+          <div>
+            <h2 class="rr-h2">Teams</h2>
+            <p class="rr-hint">Add teams, then click “Generate schedule”. Players are optional.</p>
+          </div>
+          <div class="rr-row rr-actions">
+            <button id="addTeamBtn" class="rr-btn">Add team</button>
+            <button id="generateBtn" class="rr-btn rr-btn-primary">Generate schedule</button>
+            <button id="resetResultsBtn" class="rr-btn rr-btn-warn">Reset results</button>
+          </div>
+        </div>
+
+        <div id="teamsContainer" class="rr-team-list"></div>
+      </section>
+
+      <section class="section">
+        <div class="rr-row rr-between rr-row-wrap rr-row-gap">
+          <div>
+            <h2 class="rr-h2">Next match</h2>
+            <p class="rr-hint">The next unplayed matchup in the schedule.</p>
+          </div>
+        </div>
+
+        <div id="nextMatchCard" class="rr-card rr-card-muted">
+          <div class="rr-hint">Generate a schedule to see the next matchup.</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="rr-row rr-between rr-row-wrap rr-row-gap">
+          <div>
+            <h2 class="rr-h2">Standings</h2>
+            <p class="rr-hint">Wins/Losses are based on recorded match scores.</p>
+          </div>
+        </div>
+
+        <div class="rr-table-wrap">
+          <table class="rr-table" id="standingsTable">
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>GP</th>
+                <th>W</th>
+                <th>L</th>
+                <th>PF</th>
+                <th>PA</th>
+                <th>Diff</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="rr-row rr-between rr-row-wrap rr-row-gap">
+          <div>
+            <h2 class="rr-h2">Schedule + Scores</h2>
+            <p class="rr-hint">Enter scores per matchup. Ties are allowed (no win/loss recorded).</p>
+          </div>
+        </div>
+
+        <div id="scheduleContainer"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>© 2026</p>
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * Pitch Round Robin — single-file, no deps.
+     * Data persists in localStorage under STORAGE_KEY.
+     */
+    const STORAGE_KEY = "pitch_round_robin:v1";
+
+    function nowIso() {
+      return new Date().toISOString();
+    }
+
+    function uid() {
+      // Short, deterministic-enough local id
+      return Math.random().toString(36).slice(2, 10) + "-" + Date.now().toString(36);
+    }
+
+    function clampInt(val, fallback = 0) {
+      if (val === "" || val === null || typeof val === "undefined") return fallback;
+      const n = Number(val);
+      if (!Number.isFinite(n)) return fallback;
+      return Math.trunc(n);
+    }
+
+    function safeText(s) {
+      return (s ?? "").toString();
+    }
+
+    function parsePlayers(str) {
+      return safeText(str)
+        .split(/[\n,]+/g)
+        .map(s => s.trim())
+        .filter(Boolean)
+        .slice(0, 12);
+    }
+
+    function formatPlayers(players) {
+      return (players || []).join(", ");
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { activeId: null, tournaments: [] };
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return { activeId: null, tournaments: [] };
+        if (!Array.isArray(parsed.tournaments)) parsed.tournaments = [];
+        return {
+          activeId: parsed.activeId ?? null,
+          tournaments: parsed.tournaments,
+        };
+      } catch {
+        return { activeId: null, tournaments: [] };
+      }
+    }
+
+    function saveState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function defaultTournament() {
+      return {
+        id: uid(),
+        name: "Pitch Round Robin",
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+        teams: [
+          { id: uid(), name: "Team A", players: ["Player 1", "Player 2"] },
+          { id: uid(), name: "Team B", players: ["Player 3", "Player 4"] },
+        ],
+        schedule: [],
+        results: {}, // matchId -> { aScore, bScore, completedAt }
+      };
+    }
+
+    function getTournament(state) {
+      if (!state.activeId) return null;
+      return state.tournaments.find(t => t.id === state.activeId) || null;
+    }
+
+    function upsertTournament(state, tournament) {
+      const idx = state.tournaments.findIndex(t => t.id === tournament.id);
+      if (idx >= 0) state.tournaments[idx] = tournament;
+      else state.tournaments.unshift(tournament);
+      state.activeId = tournament.id;
+    }
+
+    function deleteTournament(state, id) {
+      state.tournaments = state.tournaments.filter(t => t.id !== id);
+      if (state.activeId === id) state.activeId = state.tournaments[0]?.id ?? null;
+    }
+
+    function teamNameById(tournament, teamId) {
+      return tournament.teams.find(t => t.id === teamId)?.name || "Unknown";
+    }
+
+    function matchIdFor(match) {
+      return `${match.round}:${match.aId}:${match.bId}`;
+    }
+
+    // Standard circle method (a.k.a. Berger tables)
+    function generateRoundRobin(teamIds) {
+      const ids = [...teamIds];
+      if (ids.length < 2) return [];
+      if (ids.length % 2 === 1) ids.push(null); // BYE
+
+      const n = ids.length;
+      const rounds = n - 1;
+      const perRound = n / 2;
+      let arr = [...ids];
+      const schedule = [];
+
+      for (let r = 0; r < rounds; r++) {
+        for (let i = 0; i < perRound; i++) {
+          const left = arr[i];
+          const right = arr[n - 1 - i];
+          if (left === null || right === null) continue;
+
+          // Alternate home/away each round for a bit of fairness
+          const swap = (r % 2 === 1) && (i === 0);
+          const aId = swap ? right : left;
+          const bId = swap ? left : right;
+
+          schedule.push({ round: r + 1, aId, bId });
+        }
+
+        // Rotate all but the first element
+        // [0, 1, 2, 3, 4, 5] -> [0, 5, 1, 2, 3, 4]
+        arr = [arr[0], arr[n - 1], ...arr.slice(1, n - 1)];
+      }
+
+      return schedule;
+    }
+
+    function computeStandings(tournament) {
+      const base = new Map();
+      for (const team of tournament.teams) {
+        base.set(team.id, {
+          teamId: team.id,
+          teamName: team.name,
+          gp: 0,
+          w: 0,
+          l: 0,
+          pf: 0,
+          pa: 0,
+        });
+      }
+
+      for (const match of tournament.schedule) {
+        const id = matchIdFor(match);
+        const res = tournament.results[id];
+        if (!res) continue;
+
+        const a = base.get(match.aId);
+        const b = base.get(match.bId);
+        if (!a || !b) continue;
+
+        a.gp += 1;
+        b.gp += 1;
+        a.pf += res.aScore;
+        a.pa += res.bScore;
+        b.pf += res.bScore;
+        b.pa += res.aScore;
+
+        if (res.aScore > res.bScore) {
+          a.w += 1;
+          b.l += 1;
+        } else if (res.bScore > res.aScore) {
+          b.w += 1;
+          a.l += 1;
+        }
+      }
+
+      const rows = [...base.values()].map(r => ({ ...r, diff: r.pf - r.pa }));
+      rows.sort((x, y) => {
+        if (y.w !== x.w) return y.w - x.w;
+        if (y.diff !== x.diff) return y.diff - x.diff;
+        if (y.pf !== x.pf) return y.pf - x.pf;
+        return x.teamName.localeCompare(y.teamName);
+      });
+      return rows;
+    }
+
+    function nextMatch(tournament) {
+      for (const match of tournament.schedule) {
+        const id = matchIdFor(match);
+        if (!tournament.results[id]) return match;
+      }
+      return null;
+    }
+
+    // ---------- UI ----------
+    const els = {
+      tournamentSelect: document.getElementById("tournamentSelect"),
+      tournamentName: document.getElementById("tournamentName"),
+      tournamentHint: document.getElementById("tournamentHint"),
+      newTournamentBtn: document.getElementById("newTournamentBtn"),
+      saveTournamentBtn: document.getElementById("saveTournamentBtn"),
+      deleteTournamentBtn: document.getElementById("deleteTournamentBtn"),
+      addTeamBtn: document.getElementById("addTeamBtn"),
+      generateBtn: document.getElementById("generateBtn"),
+      resetResultsBtn: document.getElementById("resetResultsBtn"),
+      teamsContainer: document.getElementById("teamsContainer"),
+      nextMatchCard: document.getElementById("nextMatchCard"),
+      standingsBody: document.querySelector("#standingsTable tbody"),
+      scheduleContainer: document.getElementById("scheduleContainer"),
+    };
+
+    let state = loadState();
+    if (state.tournaments.length === 0) {
+      const t = defaultTournament();
+      upsertTournament(state, t);
+      saveState(state);
+    } else if (!state.activeId) {
+      state.activeId = state.tournaments[0]?.id ?? null;
+      saveState(state);
+    }
+
+    function persistTournament(tournament) {
+      tournament.updatedAt = nowIso();
+      upsertTournament(state, tournament);
+      saveState(state);
+    }
+
+    function renderTournamentSelect() {
+      const t = getTournament(state);
+      els.tournamentSelect.innerHTML = "";
+      for (const tour of state.tournaments) {
+        const opt = document.createElement("option");
+        opt.value = tour.id;
+        opt.textContent = tour.name || "(untitled)";
+        if (t && t.id === tour.id) opt.selected = true;
+        els.tournamentSelect.appendChild(opt);
+      }
+    }
+
+    function renderTournamentHeader(tournament) {
+      els.tournamentName.value = tournament.name || "";
+      const updated = tournament.updatedAt ? new Date(tournament.updatedAt).toLocaleString() : "";
+      const created = tournament.createdAt ? new Date(tournament.createdAt).toLocaleString() : "";
+      els.tournamentHint.textContent = `Created: ${created} · Updated: ${updated} · Teams: ${tournament.teams.length} · Matches: ${tournament.schedule.length}`;
+    }
+
+    function renderTeams(tournament) {
+      els.teamsContainer.innerHTML = "";
+      if (tournament.teams.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "rr-card rr-card-muted";
+        empty.textContent = "No teams yet. Click “Add team”.";
+        els.teamsContainer.appendChild(empty);
+        return;
+      }
+
+      tournament.teams.forEach((team, idx) => {
+        const card = document.createElement("div");
+        card.className = "rr-card";
+
+        const top = document.createElement("div");
+        top.className = "rr-row rr-between rr-row-gap rr-row-wrap";
+
+        const left = document.createElement("div");
+        left.className = "rr-grow";
+
+        const nameLabel = document.createElement("label");
+        nameLabel.textContent = `Team ${idx + 1} name`;
+        nameLabel.setAttribute("for", `team-name-${team.id}`);
+        const nameInput = document.createElement("input");
+        nameInput.id = `team-name-${team.id}`;
+        nameInput.type = "text";
+        nameInput.value = team.name || "";
+        nameInput.placeholder = "Team name";
+        nameInput.autocomplete = "off";
+        nameInput.addEventListener("input", () => {
+          team.name = nameInput.value;
+          persistTournament(tournament);
+          renderTournamentSelect();
+          renderTournamentHeader(tournament);
+          renderStandings(tournament);
+          renderNextMatch(tournament);
+          renderSchedule(tournament);
+        });
+
+        left.appendChild(nameLabel);
+        left.appendChild(nameInput);
+
+        const right = document.createElement("div");
+        right.className = "rr-row rr-actions";
+
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "rr-btn rr-btn-danger";
+        removeBtn.textContent = "Remove";
+        removeBtn.addEventListener("click", () => {
+          tournament.teams = tournament.teams.filter(t => t.id !== team.id);
+          // If teams change, schedule/results might be invalid. Clear them.
+          tournament.schedule = [];
+          tournament.results = {};
+          persistTournament(tournament);
+          rerender();
+        });
+
+        right.appendChild(removeBtn);
+        top.appendChild(left);
+        top.appendChild(right);
+
+        const playersLabel = document.createElement("label");
+        playersLabel.textContent = "Players (comma or newline separated)";
+        playersLabel.setAttribute("for", `team-players-${team.id}`);
+        const players = document.createElement("textarea");
+        players.id = `team-players-${team.id}`;
+        players.rows = 2;
+        players.placeholder = "e.g. Alice, Bob";
+        players.value = formatPlayers(team.players);
+        players.addEventListener("input", () => {
+          team.players = parsePlayers(players.value);
+          persistTournament(tournament);
+          renderNextMatch(tournament);
+        });
+
+        card.appendChild(top);
+        card.appendChild(playersLabel);
+        card.appendChild(players);
+
+        els.teamsContainer.appendChild(card);
+      });
+    }
+
+    function renderNextMatch(tournament) {
+      const match = nextMatch(tournament);
+      els.nextMatchCard.innerHTML = "";
+
+      if (!match) {
+        const done = document.createElement("div");
+        done.className = "rr-hint";
+        done.textContent = tournament.schedule.length ? "All matches completed." : "Generate a schedule to see the next matchup.";
+        els.nextMatchCard.className = "rr-card rr-card-muted";
+        els.nextMatchCard.appendChild(done);
+        return;
+      }
+
+      els.nextMatchCard.className = "rr-card";
+
+      const aTeam = tournament.teams.find(t => t.id === match.aId);
+      const bTeam = tournament.teams.find(t => t.id === match.bId);
+      const title = document.createElement("div");
+      title.className = "rr-next-title";
+      title.textContent = `Round ${match.round}: ${aTeam?.name || "Unknown"} vs ${bTeam?.name || "Unknown"}`;
+
+      const players = document.createElement("div");
+      players.className = "rr-hint";
+      const aPlayers = (aTeam?.players || []).length ? ` (${(aTeam.players || []).join(", ")})` : "";
+      const bPlayers = (bTeam?.players || []).length ? ` (${(bTeam.players || []).join(", ")})` : "";
+      players.textContent = `${aTeam?.name || "Unknown"}${aPlayers} · ${bTeam?.name || "Unknown"}${bPlayers}`;
+
+      const row = document.createElement("div");
+      row.className = "rr-row rr-row-wrap rr-row-gap rr-between";
+
+      const left = document.createElement("div");
+      left.className = "rr-row rr-row-wrap rr-row-gap rr-grow";
+
+      const aField = document.createElement("div");
+      aField.className = "rr-field";
+      const aLabel = document.createElement("label");
+      aLabel.textContent = `${aTeam?.name || "Team A"} score`;
+      const aScore = document.createElement("input");
+      aScore.type = "number";
+      aScore.inputMode = "numeric";
+      aScore.placeholder = "0";
+      aScore.value = "";
+      aField.appendChild(aLabel);
+      aField.appendChild(aScore);
+
+      const bField = document.createElement("div");
+      bField.className = "rr-field";
+      const bLabel = document.createElement("label");
+      bLabel.textContent = `${bTeam?.name || "Team B"} score`;
+      const bScore = document.createElement("input");
+      bScore.type = "number";
+      bScore.inputMode = "numeric";
+      bScore.placeholder = "0";
+      bScore.value = "";
+      bField.appendChild(bLabel);
+      bField.appendChild(bScore);
+
+      left.appendChild(aField);
+      left.appendChild(bField);
+
+      const right = document.createElement("div");
+      right.className = "rr-row rr-actions";
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className = "rr-btn rr-btn-primary";
+      saveBtn.textContent = "Record result";
+      saveBtn.addEventListener("click", () => {
+        const id = matchIdFor(match);
+        tournament.results[id] = {
+          aScore: clampInt(aScore.value, 0),
+          bScore: clampInt(bScore.value, 0),
+          completedAt: nowIso(),
+        };
+        persistTournament(tournament);
+        rerender();
+      });
+
+      right.appendChild(saveBtn);
+
+      row.appendChild(left);
+      row.appendChild(right);
+
+      els.nextMatchCard.appendChild(title);
+      els.nextMatchCard.appendChild(players);
+      els.nextMatchCard.appendChild(row);
+    }
+
+    function renderStandings(tournament) {
+      const standings = computeStandings(tournament);
+      els.standingsBody.innerHTML = "";
+
+      if (standings.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 7;
+        td.className = "rr-empty-td";
+        td.textContent = "No teams yet.";
+        tr.appendChild(td);
+        els.standingsBody.appendChild(tr);
+        return;
+      }
+
+      for (const row of standings) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${safeText(row.teamName)}</td>
+          <td>${row.gp}</td>
+          <td>${row.w}</td>
+          <td>${row.l}</td>
+          <td>${row.pf}</td>
+          <td>${row.pa}</td>
+          <td>${row.diff}</td>
+        `;
+        els.standingsBody.appendChild(tr);
+      }
+    }
+
+    function renderSchedule(tournament) {
+      els.scheduleContainer.innerHTML = "";
+
+      if (tournament.schedule.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "rr-card rr-card-muted";
+        empty.textContent = "No schedule yet. Add at least 2 teams, then click “Generate schedule”.";
+        els.scheduleContainer.appendChild(empty);
+        return;
+      }
+
+      const byRound = new Map();
+      for (const match of tournament.schedule) {
+        const arr = byRound.get(match.round) || [];
+        arr.push(match);
+        byRound.set(match.round, arr);
+      }
+
+      const rounds = [...byRound.keys()].sort((a, b) => a - b);
+      for (const round of rounds) {
+        const card = document.createElement("div");
+        card.className = "rr-card";
+
+        const title = document.createElement("div");
+        title.className = "rr-round-title";
+        title.textContent = `Round ${round}`;
+        card.appendChild(title);
+
+        const tableWrap = document.createElement("div");
+        tableWrap.className = "rr-table-wrap";
+        const table = document.createElement("table");
+        table.className = "rr-table";
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Match</th>
+              <th class="rr-col-score">A</th>
+              <th class="rr-col-score">B</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        `;
+
+        const tbody = table.querySelector("tbody");
+        for (const match of byRound.get(round)) {
+          const id = matchIdFor(match);
+          const res = tournament.results[id];
+          const aName = teamNameById(tournament, match.aId);
+          const bName = teamNameById(tournament, match.bId);
+
+          const tr = document.createElement("tr");
+          const status = res ? "Played" : "Unplayed";
+
+          const aInputId = `score-a-${id.replaceAll(":", "-")}`;
+          const bInputId = `score-b-${id.replaceAll(":", "-")}`;
+          tr.innerHTML = `
+            <td><strong>${safeText(aName)}</strong> vs <strong>${safeText(bName)}</strong></td>
+            <td class="rr-col-score"><input id="${aInputId}" class="rr-score" type="number" inputmode="numeric" value="${res ? res.aScore : ""}" placeholder="0"></td>
+            <td class="rr-col-score"><input id="${bInputId}" class="rr-score" type="number" inputmode="numeric" value="${res ? res.bScore : ""}" placeholder="0"></td>
+            <td>${status}</td>
+            <td class="rr-actions-cell"></td>
+          `;
+
+          const actionsCell = tr.querySelector(".rr-actions-cell");
+          const saveBtn = document.createElement("button");
+          saveBtn.className = "rr-btn rr-btn-primary rr-btn-sm";
+          saveBtn.textContent = "Save";
+          saveBtn.addEventListener("click", () => {
+            const aEl = document.getElementById(aInputId);
+            const bEl = document.getElementById(bInputId);
+            tournament.results[id] = {
+              aScore: clampInt(aEl.value, 0),
+              bScore: clampInt(bEl.value, 0),
+              completedAt: nowIso(),
+            };
+            persistTournament(tournament);
+            rerender();
+          });
+
+          const clearBtn = document.createElement("button");
+          clearBtn.className = "rr-btn rr-btn-danger rr-btn-sm";
+          clearBtn.textContent = "Clear";
+          clearBtn.addEventListener("click", () => {
+            delete tournament.results[id];
+            persistTournament(tournament);
+            rerender();
+          });
+
+          actionsCell.appendChild(saveBtn);
+          actionsCell.appendChild(clearBtn);
+
+          tbody.appendChild(tr);
+        }
+
+        tableWrap.appendChild(table);
+        card.appendChild(tableWrap);
+        els.scheduleContainer.appendChild(card);
+      }
+    }
+
+    function rerender() {
+      const tournament = getTournament(state);
+      if (!tournament) return;
+      renderTournamentSelect();
+      renderTournamentHeader(tournament);
+      renderTeams(tournament);
+      renderNextMatch(tournament);
+      renderStandings(tournament);
+      renderSchedule(tournament);
+    }
+
+    // ---------- Events ----------
+    els.tournamentSelect.addEventListener("change", () => {
+      state.activeId = els.tournamentSelect.value;
+      saveState(state);
+      rerender();
+    });
+
+    els.tournamentName.addEventListener("input", () => {
+      const t = getTournament(state);
+      if (!t) return;
+      t.name = els.tournamentName.value;
+      persistTournament(t);
+      renderTournamentSelect();
+      renderTournamentHeader(t);
+    });
+
+    els.newTournamentBtn.addEventListener("click", () => {
+      const t = {
+        id: uid(),
+        name: "New Pitch Tournament",
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+        teams: [],
+        schedule: [],
+        results: {},
+      };
+      upsertTournament(state, t);
+      saveState(state);
+      rerender();
+    });
+
+    els.saveTournamentBtn.addEventListener("click", () => {
+      const t = getTournament(state);
+      if (!t) return;
+      t.updatedAt = nowIso();
+      upsertTournament(state, t);
+      saveState(state);
+      rerender();
+    });
+
+    els.deleteTournamentBtn.addEventListener("click", () => {
+      const t = getTournament(state);
+      if (!t) return;
+      deleteTournament(state, t.id);
+      saveState(state);
+      rerender();
+    });
+
+    els.addTeamBtn.addEventListener("click", () => {
+      const t = getTournament(state);
+      if (!t) return;
+      t.teams.push({ id: uid(), name: `Team ${t.teams.length + 1}`, players: [] });
+      // If teams change, schedule/results might be invalid. Clear them.
+      t.schedule = [];
+      t.results = {};
+      persistTournament(t);
+      rerender();
+    });
+
+    els.generateBtn.addEventListener("click", () => {
+      const t = getTournament(state);
+      if (!t) return;
+
+      const ids = t.teams.map(team => team.id);
+      if (ids.length < 2) {
+        alert("Add at least 2 teams to generate a round robin schedule.");
+        return;
+      }
+
+      t.schedule = generateRoundRobin(ids);
+      t.results = {};
+      persistTournament(t);
+      rerender();
+    });
+
+    els.resetResultsBtn.addEventListener("click", () => {
+      const t = getTournament(state);
+      if (!t) return;
+      t.results = {};
+      persistTournament(t);
+      rerender();
+    });
+
+    rerender();
+  </script>
+</body>
+</html>
+
