@@ -10,6 +10,12 @@
     --muted: rgba(245, 244, 255, 0.7);
 }
 
+/* Pitch page: red/black playing-card vibe (scoped by body class) */
+body.pitch-theme {
+    --accent: #ff3b5c; /* hearts/diamonds red */
+    --bg: #050408;
+}
+
 *,
 *::before,
 *::after {
@@ -433,14 +439,29 @@ body {
 }
 
 .pitch-suits {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     font-size: 1.2rem;
-    letter-spacing: 0.25rem;
-    opacity: 0.85;
+    letter-spacing: 0.12rem;
+    opacity: 0.95;
 }
 
-.pitch-suits {
-    color: rgba(245, 244, 255, 0.78);
-    text-shadow: 0 0 18px rgba(58, 221, 194, 0.25);
+.pitch-suit {
+    display: inline-block;
+    line-height: 1;
+    text-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
+}
+
+.pitch-suit-spade,
+.pitch-suit-club {
+    color: rgba(245, 244, 255, 0.9); /* "black" suits, readable on dark bg */
+}
+
+.pitch-suit-heart,
+.pitch-suit-diamond {
+    color: var(--accent);
+    text-shadow: 0 0 18px rgba(255, 59, 92, 0.25);
 }
 
 /* Card-table background vibe for "section" blocks */
@@ -456,7 +477,7 @@ body {
     pointer-events: none;
     opacity: 0.22;
     background:
-      radial-gradient(circle at 20% 10%, rgba(58, 221, 194, 0.18), transparent 45%),
+      radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 45%),
       radial-gradient(circle at 80% 90%, rgba(180, 110, 255, 0.12), transparent 50%),
       linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent 60%);
 }
@@ -524,8 +545,10 @@ body {
 }
 
 .rr-btn:hover {
-    border-color: rgba(58, 221, 194, 0.55);
-    background: rgba(58, 221, 194, 0.08);
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.12));
+    background: color-mix(in srgb, var(--accent) 10%, rgba(255, 255, 255, 0.03));
     transform: translateY(-1px);
 }
 
@@ -534,8 +557,10 @@ body {
 }
 
 .rr-btn-primary {
-    border-color: rgba(58, 221, 194, 0.55);
-    background: rgba(58, 221, 194, 0.14);
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.1));
+    background: color-mix(in srgb, var(--accent) 18%, rgba(255, 255, 255, 0.03));
 }
 
 .rr-btn-danger {
@@ -674,8 +699,10 @@ textarea {
 select:focus,
 input:focus,
 textarea:focus {
-    border-color: rgba(58, 221, 194, 0.7);
-    background: rgba(58, 221, 194, 0.06);
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: color-mix(in srgb, var(--accent) 70%, rgba(255, 255, 255, 0.12));
+    background: color-mix(in srgb, var(--accent) 8%, rgba(255, 255, 255, 0.03));
 }
 
 .rr-card textarea {
@@ -714,5 +741,41 @@ textarea:focus {
     }
     .rr-actions-cell {
         width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    /* More thumb-friendly, less cramped on mobile */
+    .section {
+        padding: 1.25rem;
+    }
+
+    .rr-row-gap {
+        gap: 0.75rem;
+    }
+
+    .rr-btn {
+        padding: 0.7rem 0.95rem;
+    }
+
+    .rr-table th,
+    .rr-table td {
+        padding: 0.65rem 0.65rem;
+    }
+
+    .rr-col-score {
+        width: 76px;
+    }
+
+    .rr-score {
+        width: 64px;
+    }
+
+    /* Avoid iOS zoom on focus */
+    .rr-field input,
+    .rr-card input,
+    .rr-card textarea,
+    .rr-card select {
+        font-size: 16px;
     }
 }
