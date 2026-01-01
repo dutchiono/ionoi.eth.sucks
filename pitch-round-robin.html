@@ -19,6 +19,7 @@
 
     <main class="content">
       <section class="section">
+        <img class="pitch-hero-cards" src="assets/cards.svg" alt="" aria-hidden="true">
         <header class="page-heading">
           <h1 class="pitch-title">
             Pitch
@@ -607,7 +608,7 @@
       els.syncModal.classList.remove("rr-modal--open");
     }
 
-    function scheduleAutoPush({ delayMs = 1800 } = {}) {
+    function scheduleAutoPush({ delayMs = 600 } = {}) {
       if (!sync.gistId) return; // nothing to push to
       if (!sync.token) return;  // can't write without token
       if (autoPushTimer) clearTimeout(autoPushTimer);

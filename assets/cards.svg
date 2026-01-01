@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Two playing cards illustration">
+  <defs>
+    <linearGradient id="paper" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff8ef"/>
+      <stop offset="1" stop-color="#f1e6d8"/>
+    </linearGradient>
+    <linearGradient id="shadow" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="microDots" width="12" height="12" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#12131a" opacity=".10"/>
+    </pattern>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur"/>
+      <feOffset dx="0" dy="16" result="off"/>
+      <feColorMatrix in="off" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 .35 0" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="700" fill="none"/>
+
+  <!-- Card 1 (spade) -->
+  <g transform="translate(300 110) rotate(-10 250 250)" filter="url(#softShadow)">
+    <rect x="0" y="0" width="440" height="560" rx="28" fill="url(#paper)" stroke="#1b1b22" stroke-opacity=".18"/>
+    <rect x="18" y="18" width="404" height="524" rx="22" fill="url(#microDots)" opacity=".55"/>
+    <rect x="18" y="18" width="404" height="524" rx="22" fill="none" stroke="#1b1b22" stroke-opacity=".12"/>
+
+    <!-- corner marks -->
+    <g font-family="ui-sans-serif, system-ui" font-weight="700">
+      <text x="46" y="86" font-size="44" fill="#14141b">A</text>
+      <text x="46" y="126" font-size="44" fill="#14141b">`</text>
+      <g transform="translate(392 472) rotate(180 0 0)">
+        <text x="0" y="0" font-size="44" fill="#14141b">A</text>
+        <text x="0" y="40" font-size="44" fill="#14141b">`</text>
+      </g>
+    </g>
+
+    <!-- center suit -->
+    <text x="220" y="330" text-anchor="middle" font-size="210" font-family="ui-sans-serif, system-ui" fill="#14141b">`</text>
+  </g>
+
+  <!-- Card 2 (heart) -->
+  <g transform="translate(520 140) rotate(8 250 250)" filter="url(#softShadow)">
+    <rect x="0" y="0" width="440" height="560" rx="28" fill="url(#paper)" stroke="#1b1b22" stroke-opacity=".18"/>
+    <rect x="18" y="18" width="404" height="524" rx="22" fill="url(#microDots)" opacity=".45"/>
+    <rect x="18" y="18" width="404" height="524" rx="22" fill="none" stroke="#1b1b22" stroke-opacity=".12"/>
+
+    <!-- corner marks -->
+    <g font-family="ui-sans-serif, system-ui" font-weight="700">
+      <text x="46" y="86" font-size="44" fill="#d1002c">K</text>
+      <text x="46" y="126" font-size="44" fill="#d1002c">e</text>
+      <g transform="translate(392 472) rotate(180 0 0)">
+        <text x="0" y="0" font-size="44" fill="#d1002c">K</text>
+        <text x="0" y="40" font-size="44" fill="#d1002c">e</text>
+      </g>
+    </g>
+
+    <!-- center suit -->
+    <text x="220" y="330" text-anchor="middle" font-size="210" font-family="ui-sans-serif, system-ui" fill="#d1002c">e</text>
+  </g>
+
+  <!-- subtle highlight -->
+  <path d="M215 140 C430 30, 690 15, 1000 110" stroke="url(#shadow)" stroke-width="34" fill="none" opacity=".22"/>
+</svg>
