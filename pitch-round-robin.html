@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Round robin board for a Pitch cards tournament.">
+  <meta name="description" content="Round robin board for a Pitch tournament.">
   <link rel="stylesheet" href="style.css">
   <title>Pitch</title>
 </head>
-<body>
+<body class="pitch-theme">
   <div class="page">
     <nav class="top-nav">
       <a class="logo" href="index.html"><img src="dutchgif.gif" alt="dutch" class="logo-gif"></a>
@@ -20,16 +20,31 @@
     <main class="content">
       <section class="section">
         <header class="page-heading">
-          <h1 class="pitch-title">Pitch <span class="pitch-suits" aria-hidden="true">♠ ♥ ♦ ♣</span></h1>
+          <h1 class="pitch-title">
+            Pitch
+            <span class="pitch-suits" aria-hidden="true">
+              <span class="pitch-suit pitch-suit-spade">♠</span>
+              <span class="pitch-suit pitch-suit-heart">♥</span>
+              <span class="pitch-suit pitch-suit-diamond">♦</span>
+              <span class="pitch-suit pitch-suit-club">♣</span>
+            </span>
+          </h1>
         </header>
-        <p class="lead">Create a tournament, enter teams + players, auto-generate a round robin schedule, and record scores. Everything saves locally in your browser.</p>
+        <p class="lead">Enter teams + players, auto-generate a round robin schedule, and record scores. Everything saves locally in your browser.</p>
+        <div class="rr-row rr-row-wrap rr-row-gap" style="margin-top: 1.25rem;">
+          <div class="rr-field rr-grow">
+            <label for="tournamentName">Tournament name</label>
+            <input id="tournamentName" type="text" placeholder="e.g. Friday Night Pitch" autocomplete="off">
+          </div>
+        </div>
+        <p id="tournamentHint" class="rr-hint"></p>
       </section>
 
       <section class="section">
         <div class="rr-row rr-between rr-row-wrap rr-row-gap">
           <div>
             <h2 class="rr-h2">GitHub Sync</h2>
-            <p class="rr-hint">Optional. Sync tournaments across devices via a GitHub Gist file. Writing requires a GitHub token with <strong>gist</strong> permission.</p>
+            <p class="rr-hint">Optional. Sync this tournament across devices via a GitHub Gist file. Writing requires a GitHub token with <strong>gist</strong> permission.</p>
           </div>
           <div class="rr-row rr-actions">
             <button id="syncPullBtn" class="rr-btn">Pull</button>
@@ -66,25 +81,6 @@
           </div>
           <div id="syncStatus" class="rr-hint"></div>
         </div>
-      </section>
-
-      <section class="section">
-        <div class="rr-row rr-row-wrap rr-row-gap">
-          <div class="rr-field">
-            <label for="tournamentSelect">Tournament</label>
-            <select id="tournamentSelect"></select>
-          </div>
-          <div class="rr-field rr-grow">
-            <label for="tournamentName">Name</label>
-            <input id="tournamentName" type="text" placeholder="e.g. Friday Night Pitch" autocomplete="off">
-          </div>
-          <div class="rr-row rr-actions">
-            <button id="newTournamentBtn" class="rr-btn">New</button>
-            <button id="saveTournamentBtn" class="rr-btn rr-btn-primary">Save</button>
-            <button id="deleteTournamentBtn" class="rr-btn rr-btn-danger">Delete</button>
-          </div>
-        </div>
-        <p id="tournamentHint" class="rr-hint"></p>
       </section>
 
       <section class="section">
@@ -164,7 +160,8 @@
      * Pitch Round Robin — single-file, no deps.
      * Data persists in localStorage under STORAGE_KEY.
      */
-    const STORAGE_KEY = "pitch_round_robin:v1";
+    const STORAGE_KEY_V1 = "pitch_round_robin:v1";
+    const STORAGE_KEY = "pitch_round_robin:v2";
     const SYNC_KEY = "pitch_round_robin:sync:v1";
 
     function nowIso() {
@@ -199,19 +196,36 @@
       return (players || []).join(", ");
     }
 
+    function migrateV1ToV2(v1) {
+      if (!v1 || typeof v1 !== "object") return null;
+      const tournaments = Array.isArray(v1.tournaments) ? v1.tournaments : [];
+      if (tournaments.length === 0) return null;
+      const active = v1.activeId ? (tournaments.find(t => t.id === v1.activeId) || null) : null;
+      const picked = active || tournaments[0] || null;
+      if (!picked) return null;
+      return { tournament: picked };
+    }
+
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return { activeId: null, tournaments: [] };
-        const parsed = JSON.parse(raw);
-        if (!parsed || typeof parsed !== "object") return { activeId: null, tournaments: [] };
-        if (!Array.isArray(parsed.tournaments)) parsed.tournaments = [];
-        return {
-          activeId: parsed.activeId ?? null,
-          tournaments: parsed.tournaments,
-        };
+        const rawV2 = localStorage.getItem(STORAGE_KEY);
+        if (rawV2) {
+          const parsed = JSON.parse(rawV2);
+          if (parsed && typeof parsed === "object" && parsed.tournament && typeof parsed.tournament === "object") {
+            return { tournament: parsed.tournament };
+          }
+        }
+
+        const rawV1 = localStorage.getItem(STORAGE_KEY_V1);
+        if (rawV1) {
+          const parsedV1 = JSON.parse(rawV1);
+          const migrated = migrateV1ToV2(parsedV1);
+          if (migrated) return migrated;
+        }
+
+        return { tournament: defaultTournament() };
       } catch {
-        return { activeId: null, tournaments: [] };
+        return { tournament: defaultTournament() };
       }
     }
 
@@ -256,23 +270,6 @@
         schedule: [],
         results: {}, // matchId -> { aScore, bScore, completedAt }
       };
-    }
-
-    function getTournament(state) {
-      if (!state.activeId) return null;
-      return state.tournaments.find(t => t.id === state.activeId) || null;
-    }
-
-    function upsertTournament(state, tournament) {
-      const idx = state.tournaments.findIndex(t => t.id === tournament.id);
-      if (idx >= 0) state.tournaments[idx] = tournament;
-      else state.tournaments.unshift(tournament);
-      state.activeId = tournament.id;
-    }
-
-    function deleteTournament(state, id) {
-      state.tournaments = state.tournaments.filter(t => t.id !== id);
-      if (state.activeId === id) state.activeId = state.tournaments[0]?.id ?? null;
     }
 
     function teamNameById(tournament, teamId) {
@@ -385,12 +382,8 @@
       syncLiveToggle: document.getElementById("syncLiveToggle"),
       syncInterval: document.getElementById("syncInterval"),
       syncStatus: document.getElementById("syncStatus"),
-      tournamentSelect: document.getElementById("tournamentSelect"),
       tournamentName: document.getElementById("tournamentName"),
       tournamentHint: document.getElementById("tournamentHint"),
-      newTournamentBtn: document.getElementById("newTournamentBtn"),
-      saveTournamentBtn: document.getElementById("saveTournamentBtn"),
-      deleteTournamentBtn: document.getElementById("deleteTournamentBtn"),
       addTeamBtn: document.getElementById("addTeamBtn"),
       generateBtn: document.getElementById("generateBtn"),
       resetResultsBtn: document.getElementById("resetResultsBtn"),
@@ -405,18 +398,14 @@
     let liveTimer = null;
     let liveInFlight = false;
 
-    if (state.tournaments.length === 0) {
-      const t = defaultTournament();
-      upsertTournament(state, t);
-      saveState(state);
-    } else if (!state.activeId) {
-      state.activeId = state.tournaments[0]?.id ?? null;
+    if (!state.tournament) {
+      state.tournament = defaultTournament();
       saveState(state);
     }
 
     function persistTournament(tournament) {
       tournament.updatedAt = nowIso();
-      upsertTournament(state, tournament);
+      state.tournament = tournament;
       saveState(state);
     }
 
@@ -469,8 +458,20 @@
 
     function validateRemoteState(remote) {
       if (!remote || typeof remote !== "object") return false;
-      if (!Array.isArray(remote.tournaments)) return false;
-      return true;
+      // v2: { tournament: {...} }
+      if (remote.tournament && typeof remote.tournament === "object") return true;
+      // v1: { activeId, tournaments: [...] }
+      if (Array.isArray(remote.tournaments)) return true;
+      return false;
+    }
+
+    function coerceRemoteToV2(remote) {
+      if (remote?.tournament && typeof remote.tournament === "object") {
+        return { tournament: remote.tournament };
+      }
+      const migrated = migrateV1ToV2(remote);
+      if (migrated) return migrated;
+      return { tournament: defaultTournament() };
     }
 
     async function syncPull({ quiet = false } = {}) {
@@ -483,7 +484,7 @@
       const remote = JSON.parse(content);
       if (!validateRemoteState(remote)) throw new Error("Remote file JSON is not a valid Pitch state object.");
 
-      state = remote;
+      state = coerceRemoteToV2(remote);
       saveState(state);
 
       sync.lastRemoteUpdatedAt = safeText(gist.updated_at || "");
@@ -600,18 +601,6 @@
           liveInFlight = false;
         }
       }, intervalMs);
-    }
-
-    function renderTournamentSelect() {
-      const t = getTournament(state);
-      els.tournamentSelect.innerHTML = "";
-      for (const tour of state.tournaments) {
-        const opt = document.createElement("option");
-        opt.value = tour.id;
-        opt.textContent = tour.name || "(untitled)";
-        if (t && t.id === tour.id) opt.selected = true;
-        els.tournamentSelect.appendChild(opt);
-      }
     }
 
     function renderTournamentHeader(tournament) {
@@ -924,9 +913,8 @@
     }
 
     function rerender() {
-      const tournament = getTournament(state);
+      const tournament = state.tournament;
       if (!tournament) return;
-      renderTournamentSelect();
       renderTournamentHeader(tournament);
       renderTeams(tournament);
       renderNextMatch(tournament);
@@ -995,55 +983,16 @@
       }
     });
 
-    els.tournamentSelect.addEventListener("change", () => {
-      state.activeId = els.tournamentSelect.value;
-      saveState(state);
-      rerender();
-    });
-
     els.tournamentName.addEventListener("input", () => {
-      const t = getTournament(state);
+      const t = state.tournament;
       if (!t) return;
       t.name = els.tournamentName.value;
       persistTournament(t);
-      renderTournamentSelect();
       renderTournamentHeader(t);
     });
 
-    els.newTournamentBtn.addEventListener("click", () => {
-      const t = {
-        id: uid(),
-        name: "New Pitch Tournament",
-        createdAt: nowIso(),
-        updatedAt: nowIso(),
-        teams: [],
-        schedule: [],
-        results: {},
-      };
-      upsertTournament(state, t);
-      saveState(state);
-      rerender();
-    });
-
-    els.saveTournamentBtn.addEventListener("click", () => {
-      const t = getTournament(state);
-      if (!t) return;
-      t.updatedAt = nowIso();
-      upsertTournament(state, t);
-      saveState(state);
-      rerender();
-    });
-
-    els.deleteTournamentBtn.addEventListener("click", () => {
-      const t = getTournament(state);
-      if (!t) return;
-      deleteTournament(state, t.id);
-      saveState(state);
-      rerender();
-    });
-
     els.addTeamBtn.addEventListener("click", () => {
-      const t = getTournament(state);
+      const t = state.tournament;
       if (!t) return;
       t.teams.push({ id: uid(), name: `Team ${t.teams.length + 1}`, players: [] });
       // If teams change, schedule/results might be invalid. Clear them.
@@ -1054,7 +1003,7 @@
     });
 
     els.generateBtn.addEventListener("click", () => {
-      const t = getTournament(state);
+      const t = state.tournament;
       if (!t) return;
 
       const ids = t.teams.map(team => team.id);
@@ -1070,7 +1019,7 @@
     });
 
     els.resetResultsBtn.addEventListener("click", () => {
-      const t = getTournament(state);
+      const t = state.tournament;
       if (!t) return;
       t.results = {};
       persistTournament(t);
