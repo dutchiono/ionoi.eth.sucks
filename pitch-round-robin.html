@@ -247,20 +247,17 @@
       try {
         const raw = localStorage.getItem(SYNC_KEY);
         if (!raw) {
-          // live defaults to true once configured; interval is conservative for API limits
-          return { gistId: "", token: "", fileName: "pitch.json", live: true, intervalSec: 6, lastRemoteUpdatedAt: "" };
+          return { gistId: "", token: "", fileName: "pitch.json", lastRemoteUpdatedAt: "" };
         }
         const parsed = JSON.parse(raw);
         return {
           gistId: safeText(parsed.gistId || ""),
           token: safeText(parsed.token || ""),
           fileName: safeText(parsed.fileName || "pitch.json") || "pitch.json",
-          live: parsed.live === false ? false : true,
-          intervalSec: Math.max(4, clampInt(parsed.intervalSec, 6)),
           lastRemoteUpdatedAt: safeText(parsed.lastRemoteUpdatedAt || ""),
         };
       } catch {
-        return { gistId: "", token: "", fileName: "pitch.json", live: true, intervalSec: 6, lastRemoteUpdatedAt: "" };
+        return { gistId: "", token: "", fileName: "pitch.json", lastRemoteUpdatedAt: "" };
       }
     }
 
@@ -407,8 +404,6 @@
 
     let state = loadState();
     let sync = loadSyncSettings();
-    let liveTimer = null;
-    let liveInFlight = false;
     let autoPushTimer = null;
     let autoPushPending = false;
     let autoPushInFlight = false;
@@ -592,32 +587,11 @@
     }
 
     function clearLiveTimer() {
-      if (liveTimer) {
-        clearInterval(liveTimer);
-        liveTimer = null;
-      }
+      // polling removed (event-driven sync only)
     }
 
     function configureLiveUpdates() {
-      clearLiveTimer();
-      if (!sync.live) return;
-      const intervalMs = Math.max(3000, (sync.intervalSec || 8) * 1000);
-      liveTimer = setInterval(async () => {
-        if (!sync.gistId) return;
-        if (liveInFlight) return;
-        liveInFlight = true;
-        try {
-          const gist = await fetchGist(sync.gistId, sync.token);
-          const remoteUpdatedAt = safeText(gist.updated_at || "");
-          if (sync.lastRemoteUpdatedAt && remoteUpdatedAt && remoteUpdatedAt === sync.lastRemoteUpdatedAt) return;
-          await syncPull({ quiet: true });
-        } catch (e) {
-          // Keep polling; surface last error
-          setSyncStatus(`Live update error: ${safeText(e?.message || e)}`);
-        } finally {
-          liveInFlight = false;
-        }
-      }, intervalMs);
+      // polling removed (event-driven sync only)
     }
 
     function openSyncModal() {
@@ -1044,10 +1018,9 @@
     });
 
     els.syncDisableBtn.addEventListener("click", () => {
-      sync = { gistId: "", token: "", fileName: "pitch.json", live: true, intervalSec: 6, lastRemoteUpdatedAt: "" };
+      sync = { gistId: "", token: "", fileName: "pitch.json", lastRemoteUpdatedAt: "" };
       saveSyncSettings(sync);
       applySyncStatus();
-      configureLiveUpdates();
       closeSyncModal();
     });
 
@@ -1055,11 +1028,8 @@
       sync.token = els.syncTokenModal.value.trim();
       sync.gistId = els.syncGistIdModal.value.trim();
       sync.fileName = els.syncFileNameModal.value.trim() || "pitch.json";
-      sync.live = true;
-      sync.intervalSec = Math.max(4, clampInt(sync.intervalSec, 6));
       saveSyncSettings(sync);
       applySyncStatus();
-      configureLiveUpdates();
 
       if (!sync.gistId) {
         alert("Paste a Board ID (Gist ID), or use Create + enable.");
@@ -1080,8 +1050,6 @@
       sync.token = els.syncTokenModal.value.trim();
       sync.gistId = els.syncGistIdModal.value.trim();
       sync.fileName = els.syncFileNameModal.value.trim() || "pitch.json";
-      sync.live = true;
-      sync.intervalSec = Math.max(4, clampInt(sync.intervalSec, 6));
       saveSyncSettings(sync);
       applySyncStatus();
 
@@ -1093,7 +1061,6 @@
           // Create new shared board from current local state
           await syncCreateGist();
         }
-        configureLiveUpdates();
         // Push right away to ensure remote exists/has latest
         scheduleAutoPush({ delayMs: 250 });
       } catch (e) {
@@ -1147,10 +1114,14 @@
       rerender();
     });
 
-    applySyncSettingsToUI();
-    configureLiveUpdates();
     applySyncStatus();
     rerender();
+
+    // Event-driven refresh: when you come back to the tab, pull once.
+    window.addEventListener("focus", () => {
+      if (!sync.gistId) return;
+      syncPull({ quiet: true }).catch(() => {});
+    });
   </script>
 </body>
 </html>
