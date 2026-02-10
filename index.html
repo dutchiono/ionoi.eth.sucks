@@ -40,103 +40,204 @@
                 <header class="page-heading">
                     <h1>Hello from Dutch</h1>
                 </header>
-                <p>I come from a blue-collar background, and most of what I know comes from teaching myself, taking things apart, and building until they work. I've been pushing hard to break into tech by creating real projects — automation tools, crypto systems, AI agents, and anything else I can learn my way into. I'm not here to beg for opportunities; I'm here to show what I can do and to keep improving until I earn my place. This site is a collection of the things I'm building as I work toward finding a role where I can contribute, grow, and finally make this transition for real.</p>
-                <div class="skills-block">
-                    <h2>Skills</h2>
-                    <div class="skills-list">
-                        <div class="skill-row">
-                            <img src="https://skillicons.dev/icons?i=nextjs,react,tailwindcss,typescript,vite" alt="Frontend">
-                            <span><strong>Frontend:</strong> Next.js · React · Tailwind CSS · TypeScript · Vite</span>
-                        </div>
-                        <div class="skill-row">
-                            <img src="https://skillicons.dev/icons?i=supabase,redis,postgres,nodejs" alt="Backend">
-                            <span><strong>Backend:</strong> Supabase · PostgreSQL · Redis · Node.js</span>
-                        </div>
-                        <div class="skill-row">
-                            <img src="https://skillicons.dev/icons?i=hardhat,solidity,ethereum,ipfs" alt="Web3">
-                            <span><strong>Web3 / Blockchain:</strong> Hardhat · Solidity · Ethereum · IPFS</span>
-                        </div>
-                        <div class="skill-row">
-                            <img src="https://skillicons.dev/icons?i=farcaster,base,telegram,github" alt="Integration">
-                            <span><strong>Integrations:</strong> Farcaster · Base · Telegram · GitHub</span>
-                        </div>
-                        <div class="skill-row">
-                            <img src="https://skillicons.dev/icons?i=nodejs,python,openai" alt="AI">
-                            <span><strong>AI & Automation:</strong> Node.js · Python · OpenAI</span>
-                        </div>
-                        <div class="skill-row">
-                            <img src="https://skillicons.dev/icons?i=typescript,git,github" alt="Tools">
-                            <span><strong>Tools:</strong> TypeScript · Git · GitHub</span>
-                        </div>
-                    </div>
-                </div>
+                <p>I come from a blue-collar background, and most of what I know comes from teaching myself, taking things apart, and building until they work. I've been pushing hard to break into tech by creating real projects — automation tools, crypto systems, AI agents, and anything else I can learn my way into. I'm not here to prove I belong; I'm just showing what I can do. If that's enough, cool. If not, I'll keep building anyway.</p>
+                
+                <p>Right now, I'm focused on figuring out what I want to do with my life, and I have some ideas. I'm working on:</p>
+                <ul>
+                    <li><strong>AI Agents</strong> – Systems that automate workflows for crypto and productivity</li>
+                    <li><strong>Crypto Edge Tools</strong> – Scanning systems for prediction markets, social sentiment, and on-chain signals</li>
+                    <li><strong>System Automation</strong> – Developer tooling and system-level automations</li>
+                </ul>
+
+                <p>Some of these ideas will go further than others, and some might not work at all, but I'm building them either way.</p>
+                
+                <p>I'm also looking for opportunities — whether that's a real job, a paid project, or building something with people who get it. If you're interested, hit me up.</p>
             </section>
 
             <section id="projects" class="tab-panel">
                 <header class="page-heading">
-                    <h1>Projects</h1>
+                    <h1>Active Projects</h1>
                 </header>
-                <div class="project-grid">
-                    <article class="project-card" data-miniapp="https://badtraders.xyz" data-web="https://badtraders.xyz">
-                        <div class="project-preview">
-                            <iframe src="https://badtraders.xyz" frameborder="0" loading="lazy" class="preview-iframe"></iframe>
+                
+                <!-- NEW: Category Slider -->
+                <div class="category-slider">
+                    <button class="category-btn active" data-category="all">All</button>
+                    <button class="category-btn" data-category="live-products">Live Products</button>
+                    <button class="category-btn" data-category="dev-tools">Dev Tools</button>
+                    <button class="category-btn" data-category="ai-agents">AI Agents</button>
+                    <button class="category-btn" data-category="infrastructure">Infrastructure</button>
+                </div>
+                
+                <!-- All Projects Container -->
+                <div class="projects-container">
+                    <!-- Live Products Group -->
+                    <div class="project-group" data-group="live-products">
+                        <div class="project-card">
+                            <h3>Drown 🎵</h3>
+                            <p>Cross-platform music player with global hotkeys, shuffle/repeat, and 8D audio effects. Built for music lovers who want control.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">React Native</span>
+                                <span class="tech-tag">Expo</span>
+                                <span class="tech-tag">TypeScript</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/Drown" target="_blank">GitHub</a>
+                            </div>
                         </div>
-                        <div class="project-info">
-                            <p class="label">BadTraders</p>
-                            <h2>badtraders.xyz</h2>
-                            <p class="project-desc">Loss leaderboard tracking real-time trading performance on Base.</p>
+
+                        <div class="project-card">
+                            <h3>BagsStudio 🛍️</h3>
+                            <p>E-commerce platform for custom bag design and sales. Modern shopping experience with admin dashboard.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">React Native</span>
+                                <span class="tech-tag">Expo</span>
+                                <span class="tech-tag">TypeScript</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/BagsStudio" target="_blank">GitHub</a>
+                            </div>
                         </div>
-                    </article>
-                    <article class="project-card" data-miniapp="https://digipets.bronkle.xyz" data-web="https://digipets.bronkle.xyz">
-                        <div class="project-preview">
-                            <iframe src="https://digipets.bronkle.xyz" frameborder="0" loading="lazy" class="preview-iframe"></iframe>
+
+                        <div class="project-card">
+                            <h3>HVAC AI Secretary 🤖</h3>
+                            <p>AI-powered appointment scheduling for HVAC businesses. Automates calls, schedules work, and handles customer interactions.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Vapi</span>
+                                <span class="tech-tag">AI</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/hvac-ai-secretary" target="_blank">GitHub</a>
+                            </div>
                         </div>
-                        <div class="project-info">
-                            <p class="label">DigiPets</p>
-                            <h2>digipets.bronkle.xyz</h2>
-                            <p class="project-desc">Live site: digipets.bronkle.xyz</p>
+                    </div>
+
+                    <!-- Dev Tools Group -->
+                    <div class="project-group" data-group="dev-tools">
+                        <div class="project-card">
+                            <h3>Retake Scaffold 🏗️</h3>
+                            <p>NextJS starter template for rapid app development. Pre-configured with authentication, database, and modern stack.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Next.js</span>
+                                <span class="tech-tag">TypeScript</span>
+                                <span class="tech-tag">Prisma</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/retake-scaffold" target="_blank">GitHub</a>
+                            </div>
                         </div>
-                    </article>
-                    <article class="project-card" data-miniapp="https://bushleague.xyz" data-web="https://bushleague.xyz">
-                        <div class="project-preview">
-                            <iframe src="https://bushleague.xyz" frameborder="0" loading="lazy" class="preview-iframe"></iframe>
+
+                        <div class="project-card">
+                            <h3>SSHappy 🔐</h3>
+                            <p>React Native SSH/SFTP client with secure credential management. Connect and manage remote servers from mobile.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">React Native</span>
+                                <span class="tech-tag">TypeScript</span>
+                                <span class="tech-tag">SSH</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/sshappy" target="_blank">GitHub</a>
+                            </div>
                         </div>
-                        <div class="project-info">
-                            <p class="label">BushLeague / Gen1</p>
-                            <h2>bushleague.xyz</h2>
-                            <p class="project-desc">AI-powered NFT minting with generative art and Base Pay integration.</p>
+
+                        <div class="project-card">
+                            <h3>Restaurant POS System 🍽️</h3>
+                            <p>Modern point-of-sale system for restaurants. Order management, payment processing, kitchen display integration.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">React Native</span>
+                                <span class="tech-tag">TypeScript</span>
+                                <span class="tech-tag">Payments</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/restaurant-pos-system" target="_blank">GitHub</a>
+                            </div>
                         </div>
-                    </article>
-                    <article class="project-card" data-miniapp="https://daemon.bushleague.xyz" data-web="https://daemon.bushleague.xyz">
-                        <div class="project-preview">
-                            <iframe src="https://daemon.bushleague.xyz" frameborder="0" loading="lazy" class="preview-iframe"></iframe>
+                    </div>
+
+                    <!-- AI Agents Group -->
+                    <div class="project-group" data-group="ai-agents">
+                        <div class="project-card">
+                            <h3>Fathom 🔍</h3>
+                            <p>AI agent for crypto research and trading insights. Automates market analysis and provides actionable signals.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">AI</span>
+                                <span class="tech-tag">Crypto</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/fathom" target="_blank">GitHub</a>
+                            </div>
                         </div>
-                        <div class="project-info">
-                            <p class="label">Daemon Social</p>
-                            <h2>daemon.bushleague.xyz</h2>
-                            <p class="project-desc">Windows Electron client for decentralized social network with Farcaster-style interface.</p>
+
+                        <div class="project-card">
+                            <h3>Nanemini 🎯</h3>
+                            <p>Telegram-based trading bot with real-time market data and automated strategies. Built for Base chain.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Telegram</span>
+                                <span class="tech-tag">Trading</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/nanemini" target="_blank">GitHub</a>
+                            </div>
                         </div>
-                    </article>
-                    <article class="project-card" data-miniapp="https://harpoon.bushleague.xyz" data-web="https://harpoon.bushleague.xyz">
-                        <div class="project-preview">
-                            <iframe src="https://harpoon.bushleague.xyz" frameborder="0" loading="lazy" class="preview-iframe"></iframe>
+
+                        <div class="project-card">
+                            <h3>Polymarket Edge Detector</h3>
+                            <p>AI agent that identifies mispriced prediction markets by cross-referencing real-time odds with external data sources.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">AI</span>
+                                <span class="tech-tag">Polymarket</span>
+                            </div>
                         </div>
-                        <div class="project-info">
-                            <p class="label">Harpoon</p>
-                            <h2>harpoon.bushleague.xyz</h2>
-                            <p class="project-desc">Live site: harpoon.bushleague.xyz</p>
+
+                        <div class="project-card">
+                            <h3>Base Chain Signal Monitor</h3>
+                            <p>Real-time on-chain intelligence for Base network. Tracks new tokens, whale movements, and rug-pull risks.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Web3</span>
+                                <span class="tech-tag">Base</span>
+                            </div>
                         </div>
-                    </article>
-                    <article class="project-card" data-miniapp="https://tavernkeeper.xyz" data-web="https://tavernkeeper.xyz">
-                        <div class="project-preview">
-                            <iframe src="https://tavernkeeper.xyz" frameborder="0" loading="lazy" class="preview-iframe"></iframe>
+
+                        <div class="project-card">
+                            <h3>Crypto Social Sentiment Monitor</h3>
+                            <p>Tracks Twitter, Reddit, and CryptoPanic for emerging narratives and token mentions. Early warning system for viral plays.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">AI</span>
+                                <span class="tech-tag">Social</span>
+                            </div>
                         </div>
-                        <div class="project-info">
-                            <p class="label">TavernKeeper</p>
-                            <h2>tavernkeeper.xyz</h2>
-                            <p class="project-desc">Blockchain-based dungeon crawler game with AI-driven NFT heroes, deterministic gameplay, and 8-bit pixel art aesthetic on Monad blockchain.</p>
+
+                        <div class="project-card">
+                            <h3>Crypto Technical Analysis Agent</h3>
+                            <p>Automated 4-hour technical analysis for BTC, ETH, and trending altcoins. Multi-indicator confluence signals.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">TA</span>
+                                <span class="tech-tag">Trading</span>
+                            </div>
                         </div>
-                    </article>
+                    </div>
+
+                    <!-- Infrastructure Group -->
+                    <div class="project-group" data-group="infrastructure">
+                        <div class="project-card">
+                            <h3>demoScanners 📡</h3>
+                            <p>Infrastructure monitoring and alerting system. Tracks server health, uptime, and performance metrics.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Monitoring</span>
+                                <span class="tech-tag">DevOps</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/dutchiono/demoScanners" target="_blank">GitHub</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -144,131 +245,81 @@
                 <header class="page-heading">
                     <h1>Musings</h1>
                 </header>
-                <ul class="journal-list">
-                </ul>
+                <p class="journal-intro">Random thoughts, lessons learned, and the occasional rant about building things.</p>
+                <div class="journal-entries">
+                    <article class="journal-entry">
+                        <h3 class="entry-title">The Gap Between Knowing and Doing</h3>
+                        <p class="entry-date">February 2026</p>
+                        <p>Everyone talks about imposter syndrome like it's a bug you need to fix. I'm starting to think it's a feature. The day you stop doubting whether you're good enough is probably the day you stop getting better.</p>
+                        <p>I've been thinking a lot about the gap between knowing what to do and actually doing it. You can read every tutorial, watch every video, copy every best practice — but until you've broken something at 3 AM and had to fix it before anyone notices, you haven't really learned it.</p>
+                        <p>Blue-collar work taught me that. You don't get credit for knowing the right tool exists. You get credit for grabbing it and fixing the problem.</p>
+                    </article>
+
+                    <article class="journal-entry">
+                        <h3 class="entry-title">Why I'm Building in Public</h3>
+                        <p class="entry-date">January 2026</p>
+                        <p>Building in public is uncomfortable. Every half-working project, every abandoned experiment, every time I pivot — it's all out there. But hiding until you're "ready" is a trap.</p>
+                        <p>If I waited until my projects were perfect before showing them, I'd never ship anything. And honestly? The messy, in-progress stuff is more valuable than the polished final product. It shows the process, the failures, the pivots. That's the real learning.</p>
+                        <p>So yeah, this site is public. The projects are public. The mistakes are public. If that's not good enough for someone, they weren't going to hire me anyway.</p>
+                    </article>
+
+                    <article class="journal-entry">
+                        <h3 class="entry-title">What I'm Actually Looking For</h3>
+                        <p class="entry-date">December 2025</p>
+                        <p>People keep asking what kind of job I want. Honest answer? I have no idea. I just know I want to work with people who build things that matter and who give a shit about the details.</p>
+                        <p>I don't care if it's crypto, AI, developer tools, or something I've never heard of. I care about whether the problem is interesting and whether the people solving it are the kind who stay up late fixing edge cases instead of calling it "good enough."</p>
+                        <p>I'm not picky about job titles. I'm picky about who I work with.</p>
+                    </article>
+                </div>
             </section>
         </main>
 
         <footer class="footer">
-            <p>© 2025</p>
+            <p>&copy; 2026 ionoi.eth.sucks | Built by Dutch</p>
         </footer>
-
-        <script>
-            console.log("%cionoi noion ionoi noion ionoi noion", "color:#2ed2a6;font-weight:700;font-size:18px");
-
-            // Multi-platform Mini App SDK initialization
-            let farcasterSDK = null;
-            let isInFarcaster = false;
-            let isInBaseApp = false;
-
-            async function initFarcasterSDK() {
-                try {
-                    if (typeof window.FarcasterMiniAppSDK !== 'undefined') {
-                        farcasterSDK = window.FarcasterMiniAppSDK.sdk;
-                        isInFarcaster = await farcasterSDK.isInFarcaster();
-
-                        if (isInFarcaster) {
-                            console.log('Farcaster mini-app detected');
-                            // Enable back navigation
-                            const capabilities = await farcasterSDK.getCapabilities();
-                            if (capabilities.includes('back')) {
-                                await farcasterSDK.back.enableWebNavigation();
-                            }
-
-                            // Signal that the app is ready
-                            await farcasterSDK.ready();
-                            console.log('Farcaster mini-app ready');
-                        }
-                    }
-                } catch (error) {
-                    console.log('Farcaster SDK not available:', error);
-                }
-            }
-
-            async function initBaseAppSDK() {
-                try {
-                    // Check for Base App SDK
-                    if (window.baseApp) {
-                        isInBaseApp = true;
-                        console.log('Base App detected via SDK');
-                        return;
-                    }
-
-                    // Detect Base App context via URL patterns, referrer, or user agent
-                    const url = window.location.href.toLowerCase();
-                    const referrer = document.referrer.toLowerCase();
-                    const userAgent = navigator.userAgent.toLowerCase();
-
-                    // Base App indicators
-                    if (url.includes('base.app') ||
-                        referrer.includes('base.app') ||
-                        userAgent.includes('baseapp') ||
-                        window.location.search.includes('baseapp=true') ||
-                        // Check for Base App injected context
-                        (window.parent !== window && referrer.includes('base'))) {
-                        isInBaseApp = true;
-                        console.log('Base App detected via context');
-                    }
-                } catch (error) {
-                    console.log('Base App detection error:', error);
-                }
-            }
-
-            async function initSDKs() {
-                await Promise.all([initFarcasterSDK(), initBaseAppSDK()]);
-            }
-
-            // Initialize SDKs on load
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initSDKs);
-            } else {
-                initSDKs();
-            }
-
-            // Tab switching
-            const tabs = document.querySelectorAll(".tab");
-            const panels = document.querySelectorAll(".tab-panel");
-
-            tabs.forEach(tab => {
-                tab.addEventListener("click", () => {
-                    tabs.forEach(btn => btn.classList.remove("active"));
-                    panels.forEach(panel => panel.classList.remove("active"));
-                    tab.classList.add("active");
-                    document.getElementById(tab.dataset.tab).classList.add("active");
-                });
-            });
-
-            // Context-aware project cards (entire card is clickable)
-            document.querySelectorAll('.project-card[data-miniapp]').forEach(card => {
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', async (e) => {
-                    // Don't trigger if clicking inside iframe
-                    if (e.target.closest('.preview-iframe')) return;
-
-                    const miniappUrl = card.getAttribute('data-miniapp');
-                    const webUrl = card.getAttribute('data-web');
-                    const isInMiniApp = isInFarcaster || isInBaseApp;
-
-                    if (isInMiniApp && miniappUrl) {
-                        e.preventDefault();
-                        // In mini-app context, open as mini-app
-                        if (isInFarcaster && farcasterSDK && farcasterSDK.actions) {
-                            await farcasterSDK.actions.openUrl(miniappUrl);
-                        } else if (isInBaseApp) {
-                            // Base App handles navigation via manifest - use direct navigation
-                            window.location.href = miniappUrl;
-                        } else {
-                            window.location.href = miniappUrl;
-                        }
-                    } else {
-                        // Outside mini-app context, open in new tab
-                        window.open(webUrl, '_blank');
-                    }
-                });
-            });
-        </script>
     </div>
+
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.tab[data-tab]').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.dataset.tab;
+                
+                // Update active tab button
+                document.querySelectorAll('.tab[data-tab]').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update active tab panel
+                document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+
+        // NEW: Category Filter with Smooth Transitions
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const projectGroups = document.querySelectorAll('.project-group');
+        
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const category = button.dataset.category;
+                
+                // Update active button
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Show/hide groups with fade effect
+                projectGroups.forEach(group => {
+                    if (category === 'all' || group.dataset.group === category) {
+                        group.classList.add('active');
+                    } else {
+                        group.classList.remove('active');
+                    }
+                });
+            });
+        });
+        
+        // Initialize: show all groups by default
+        projectGroups.forEach(group => group.classList.add('active'));
+    </script>
 </body>
 </html>
-
-
