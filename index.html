@@ -4,136 +4,188 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="public, max-age=604800">
-    <meta name="description" content="lean Projects + Musings inspired by wojtek.im/projects">
+    <meta name="description" content="Dutch Iono - Building AI agents, crypto tools, and automation systems. Breaking into tech through real projects.">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="ionoi.eth.sucks | Projects">
-    <meta property="og:description" content="Everything Dutch is currently working on, styled like wojtek.im/projects.">
+    <meta property="og:title" content="Dutch Iono">
+    <meta property="og:description" content="Building AI agents, crypto tools, and automation systems. Breaking into tech through real projects.">
     <meta property="og:image" content="https://dutchiono.github.io/ionoi.eth.sucks/image.png">
     <meta property="og:url" content="https://dutchiono.github.io/ionoi.eth.sucks">
     <meta name="fc:miniapp" content='{"version":"1","name":"Ionoi Purple Lab","iconUrl":"https://dutchiono.github.io/ionoi.eth.sucks/icon.png","homeUrl":"https://dutchiono.github.io/ionoi.eth.sucks","imageUrl":"https://dutchiono.github.io/ionoi.eth.sucks/image.png","buttonTitle":"Open","splashImageUrl":"https://dutchiono.github.io/ionoi.eth.sucks/splash.png","splashBackgroundColor":"#0b0d1b"}'>
     <script src="https://unpkg.com/@farcaster/miniapp-sdk@latest/dist/index.umd.js"></script>
     <link rel="stylesheet" href="style.css">
-    <title>ionoi.eth.sucks | Projects</title>
+    <title>Dutch Iono</title>
 </head>
 <body>
-    <div class="page">
-        <nav class="top-nav">
-            <a class="logo" href="#home"><img src="dutchgif.gif" alt="dutch" class="logo-gif"></a>
-            <div class="tab-links">
-                <button class="tab active" data-tab="home">Home</button>
-                <button class="tab" data-tab="projects">Projects</button>
-                <button class="tab" data-tab="journal">Musings</button>
-                <a class="tab" href="pitch-round-robin.html">Pitch</a>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <img src="dutchgif.gif" alt="Dutch Iono" class="avatar">
+                </a>
+                <h1>Dutch Iono</h1>
+                <p class="tagline">Building fast, breaking things, learning in public.</p>
             </div>
-        </nav>
-        <div class="social-links-nav">
-            <a href="https://warpcast.com/ionoi" target="_blank" rel="noreferrer">Warpcast</a>
-            <a href="https://x.com/ionoi" target="_blank" rel="noreferrer">X</a>
-            <a href="https://t.me/dutchiono" target="_blank" rel="noreferrer">Telegram</a>
-            <a href="https://discord.com/users/dutchiono" target="_blank" rel="noreferrer">Discord</a>
-            <a href="https://github.com/dutchiono" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="mailto:dutchiono@gmail.com">Email</a>
-        </div>
+            
+            <nav class="main-nav">
+                <button class="nav-link active" data-section="about">About</button>
+                <button class="nav-link" data-section="projects">Projects</button>
+                <button class="nav-link" data-section="journal">Journal</button>
+            </nav>
+        </header>
 
-        <main class="content">
-            <section id="home" class="tab-panel active">
-                <header class="page-heading">
-                    <h1>Hello from Dutch</h1>
-                </header>
-                <p>I come from a blue-collar background, and most of what I know comes from teaching myself, taking things apart, and building until they work. I've been pushing hard to break into tech by creating real projects — automation tools, crypto systems, AI agents, and anything else I can learn my way into. I'm not here to watch, I'm here to build.</p>
-                <p>I'm looking for work as a Junior Developer or in any other tech role where I can contribute and keep growing. I've got a strong foundation in networking, systems, and sysadmin, and while I may not have a CS degree, I have something just as valuable: a work ethic, a lot of grit, and a portfolio of real stuff I've built from the ground up.</p>
-                <p>So, if you are looking for someone who can dive in, pick things up fast, and actually deliver, let's talk.</p>
-                <p><a href="resume.pdf" class="resume-download">📄 Download Resume</a></p>
-            </section>
-
-            <section id="projects" class="tab-panel">
-                <header class="page-heading">
-                    <h1>Projects</h1>
-                </header>
-
-                <div class="section">
-                    <h2>🚀 Current</h2>
-                    <ul>
-                        <li><strong>Personal PPR Token:</strong> Building an equity-tracking token system on Base where I make money = Holders make money. Typical cap table doesn't fit when everyone else puts in what they have, so I'm building a path for equity holders that's frictionless, transparent, and real when the cash shows up.</li>
-                        <li><strong>Polymarket Tech Stack:</strong> Building AI agents and scripts to monitor Polymarket data with research and deliver edge detection alerts in real time. Automated market monitoring, cross-referenced odds against outside data, and build custom notification pipelines via Telegram and Google Sheets.</li>
-                        <li><strong>Base Chain Intelligence:</strong> Building an AI agent that tracks new token pairs, liquidity flow, whale movements, and rug-pull signals on Base so I can spot one-chain opportunities before they hit the mainstream.</li>
-                        <li><strong>Social Sentiment Monitor:</strong> Automating Twitter, Reddit, and CryptoPanic scraping to catch emerging narratives and influencer activity before they move the market.</li>
-                        <li><strong>Technical Analysis Agent:</strong> Building an AI agent that runs 4-hour chart analysis for BTC, ETH, XMR, MONAD, and trending altcoins, computing multiple indicators, detecting confluence, and packaging tradeable setups with entry + exit levels, risk to reward, and stop loss.</li>
-                    </ul>
+        <main>
+            <!-- About Section -->
+            <section id="about" class="section active">
+                <div class="bio">
+                    <p>I come from a blue-collar background, and most of what I know comes from teaching myself, taking things apart, and building until they work. I've been pushing hard to break into tech by creating real projects — automation tools, crypto systems, AI agents, and anything else I can learn my way into.</p>
+                    
+                    <p>I'm not here to watch, I'm here to build.</p>
+                    
+                    <p>Looking for work as a Junior Developer or in any other tech role where I can contribute and keep growing. I've got a strong foundation in networking, systems, and sysadmin work, and while I may not have a CS degree, I have something just as valuable: a work ethic, a lot of grit, and a portfolio of real stuff I've built from the ground up.</p>
+                    
+                    <a href="https://dutchiono.github.io/ionoi.eth.sucks/resume.pdf" class="resume-link" download>Download Resume →</a>
                 </div>
 
-                <div class="section">
-                    <h2>🔧 Recent</h2>
-                    <ul>
-                        <li><strong>SSHappy:</strong> Building a React Native mobile app that brings SSH server management to Phones. This means executing remote commands (like service restarts, reboots, log checks), viewing uptime, setting health checks, and managing file transfers all from your phone. I was tired of using tiny terminal apps with no saved sessions or pre-built commands, so now I'm making SSHappy in public, the way I prefer.</li>
-                        <li><strong>Nebula-R-07 Crypto Intelligence System:</strong> Deployed a network of AI agents that follow my crypto portfolio, automate research, run alerts, and monitor markets. Tailored agents handle Polymarket edge detection, on-chain data from Base, social sentiment across X/Twitter, Reddit, news and even run technical analysis with real indicators.</li>
-                        <li><strong>Server Health Monitor</strong> Built an AI agent that watches servers/services via Healthchecks.io, runs custom health checks, monitors resource usage (CPU, RAM, disk), and sends me focused, intelligent alerts when things go down or start trending bad. Tailscale access, Telegram notifications and pause controls for maintenance windows.</li>
-                    </ul>
-                </div>
-
-                <div class="section">
-                    <h2>🌱 Shipped</h2>
-                    <ul>
-                        <li><strong>VMHost Portal:</strong> Created a self-service dashboard and API for integrating VMHost management, automating join requests, granting access, and logging everything for security and tracking.</li>
-                        <li><strong>Postgres Backup Automation:</strong> Deployed Python and Bash scripts to handle scheduled database backups, encryption, compression, rotation, and uploads to remote storage. All watched by Nagios and wired to Telegram notifications.</li>
-                        <li><strong>Nagios Monitoring Infrastructure:</strong> Built a custom service and host monitoring framework with custom plugins, smart alerting, dashboards, and Nagios integration. It's been watching my production servers since day one.</li>
-                        <li><strong>Linux Home Lab:</strong> Set up a full-scale homelab with Proxmox VE, TrueNAS, NAS backups, Samba, NFS, LD devices (Tailscale, Pi-Hole), custom PHP web portals, and automated scripts to handle expansion, busy backups, and event-based workflows.</li>
+                <div class="links-section">
+                    <h2>Elsewhere</h2>
+                    <ul class="social-links">
+                        <li><a href="https://warpcast.com/ionoi" target="_blank">Warpcast</a></li>
+                        <li><a href="https://x.com/ionoi" target="_blank">X / Twitter</a></li>
+                        <li><a href="https://t.me/dutchiono" target="_blank">Telegram</a></li>
+                        <li><a href="https://discord.com/users/dutchiono" target="_blank">Discord</a></li>
+                        <li><a href="https://github.com/dutchiono" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:dutchiono@gmail.com">Email</a></li>
                     </ul>
                 </div>
             </section>
 
-            <section id="journal" class="tab-panel">
-                <header class="page-heading">
-                    <h1>Musings</h1>
-                </header>
-                <p><i>Coming soon. Intentional thinking about tech, crypto, automation, and building a career outside traditional routes.</i></p>
+            <!-- Projects Section -->
+            <section id="projects" class="section">
+                <div class="section-header">
+                    <h2>Current Projects</h2>
+                </div>
+                <div id="current-projects" class="projects-grid">
+                    <div class="loading">Loading projects...</div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Recent Work</h2>
+                </div>
+                <div id="recent-projects" class="projects-grid">
+                    <div class="loading">Loading projects...</div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Shipped</h2>
+                </div>
+                <div id="shipped-projects" class="projects-grid">
+                    <div class="loading">Loading projects...</div>
+                </div>
+            </section>
+
+            <!-- Journal Section -->
+            <section id="journal" class="section">
+                <div class="section-header">
+                    <h2>Journal</h2>
+                    <p class="section-subtitle">Intentional thinking about tech, crypto, automation, and building a career outside traditional routes.</p>
+                </div>
+                <div id="journal-entries" class="journal-grid">
+                    <div class="coming-soon">
+                        <p>Coming soon. Building in public, documenting the journey.</p>
+                    </div>
+                </div>
             </section>
         </main>
 
-        <footer class="footer">
-            <p>Built by <a href="https://warpcast.com/ionoi">Dutch</a> • Building in public, one project at a time</p>
+        <footer>
+            <p>Built with intention. Deployed on ICP.</p>
         </footer>
     </div>
 
     <script>
-        const tabButtons = document.querySelectorAll('.tab');
-        const tabPanels = document.querySelectorAll('.tab-panel');
+        // Tab Navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
 
-        function showTab(tabName) {
-            tabPanels.forEach(panel => {
-                panel.classList.contains(tabName) ? panel.classList.add('active') : panel.classList.remove('active');
-            });
-
-            tabButtons.forEach(button => {
-                if (button.dataset.tab === tabName) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Handle initial hash or default to #home
-            const hash = location.hash.replace('#', '') || 'home';
-            showTab(hash);
-
-            // Navigation handler
-            window.addEventListener('hashchange', () => {
-                const hash = location.hash.replace('#', '');
-                showTab(hash);
-            });
-
-            // Tab click handler
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const tabName = button.dataset.tab;
-                    if (tabName) {
-                        location.hash = `#${tabName}`;
-                    }
-                });
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const targetSection = link.dataset.section;
+                
+                navLinks.forEach(l => l.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                link.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
             });
         });
+
+        // Load Projects from JSON
+        async function loadProjects() {
+            try {
+                const cacheKey = 'projects_cache';
+                const cacheTimeKey = 'projects_cache_time';
+                const cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours
+
+                let projects;
+                const cachedData = localStorage.getItem(cacheKey);
+                const cachedTime = localStorage.getItem(cacheTimeKey);
+
+                if (cachedData && cachedTime && (Date.now() - parseInt(cachedTime) < cacheExpiry)) {
+                    projects = JSON.parse(cachedData);
+                } else {
+                    const response = await fetch('projects.json');
+                    if (!response.ok) throw new Error('Failed to load projects');
+                    projects = await response.json();
+                    
+                    localStorage.setItem(cacheKey, JSON.stringify(projects));
+                    localStorage.setItem(cacheTimeKey, Date.now().toString());
+                }
+
+                renderProjects(projects);
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                document.querySelectorAll('.projects-grid').forEach(grid => {
+                    grid.innerHTML = '<div class="error">Unable to load projects. Check back soon.</div>';
+                });
+            }
+        }
+
+        function renderProjects(projectsData) {
+            const current = projectsData.filter(p => p.status === 'current');
+            const recent = projectsData.filter(p => p.status === 'recent');
+            const shipped = projectsData.filter(p => p.status === 'shipped');
+
+            renderProjectGroup('current-projects', current);
+            renderProjectGroup('recent-projects', recent);
+            renderProjectGroup('shipped-projects', shipped);
+        }
+
+        function renderProjectGroup(containerId, projects) {
+            const container = document.getElementById(containerId);
+            
+            if (!projects || projects.length === 0) {
+                container.innerHTML = '<div class="empty">No projects yet.</div>';
+                return;
+            }
+
+            container.innerHTML = projects.map(project => `
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>${project.name}</h3>
+                        ${project.url ? `<a href="${project.url}" target="_blank" class="project-link" aria-label="Visit ${project.name}">↗</a>` : ''}
+                    </div>
+                    <p class="project-description">${project.description}</p>
+                    ${project.tags && project.tags.length > 0 ? `
+                        <div class="project-tags">
+                            ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        loadProjects();
     </script>
 </body>
 </html>
