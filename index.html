@@ -4,182 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="public, max-age=604800">
-    <meta name="description" content="lean Projects + Musings inspired by wojtek.im/projects">
+    <meta name="description" content="Dutch Iono - Building AI agents, crypto tools, and automation systems. Breaking into tech through real projects.">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="ionoi.eth.sucks | Projects">
-    <meta property="og:description" content="Everything Dutch is currently working on, styled like wojtek.im/projects.">
+    <meta property="og:title" content="Dutch Iono">
+    <meta property="og:description" content="Building AI agents, crypto tools, and automation systems. Breaking into tech through real projects.">
     <meta property="og:image" content="https://dutchiono.github.io/ionoi.eth.sucks/image.png">
     <meta property="og:url" content="https://dutchiono.github.io/ionoi.eth.sucks">
     <meta name="fc:miniapp" content='{"version":"1","name":"Ionoi Purple Lab","iconUrl":"https://dutchiono.github.io/ionoi.eth.sucks/icon.png","homeUrl":"https://dutchiono.github.io/ionoi.eth.sucks","imageUrl":"https://dutchiono.github.io/ionoi.eth.sucks/image.png","buttonTitle":"Open","splashImageUrl":"https://dutchiono.github.io/ionoi.eth.sucks/splash.png","splashBackgroundColor":"#0b0d1b"}'>
     <script src="https://unpkg.com/@farcaster/miniapp-sdk@latest/dist/index.umd.js"></script>
     <link rel="stylesheet" href="style.css">
-    <title>ionoi.eth.sucks | Projects</title>
+    <title>Dutch Iono</title>
 </head>
 <body>
-    <div class="page">
-        <nav class="top-nav">
-            <a class="logo" href="#home"><img src="dutchgif.gif" alt="dutch" class="logo-gif"></a>
-            <div class="tab-links">
-                <button class="tab active" data-tab="home">Home</button>
-                <button class="tab" data-tab="projects">Projects</button>
-                <button class="tab" data-tab="journal">Musings</button>
-                <a class="tab" href="pitch-round-robin.html">Pitch</a>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <img src="dutchgif.gif" alt="Dutch Iono" class="avatar">
+                </a>
+                <h1>Dutch Iono</h1>
+                <p class="tagline">Building fast, breaking things, learning in public.</p>
             </div>
-        </nav>
-        <div class="social-links-nav">
-            <a href="https://warpcast.com/ionoi" target="_blank" rel="noreferrer">Warpcast</a>
-            <a href="https://x.com/ionoi" target="_blank" rel="noreferrer">X</a>
-            <a href="https://t.me/dutchiono" target="_blank" rel="noreferrer">Telegram</a>
-            <a href="https://discord.com/users/dutchiono" target="_blank" rel="noreferrer">Discord</a>
-            <a href="https://github.com/dutchiono" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="mailto:dutchiono@gmail.com">Email</a>
-        </div>
+            
+            <nav class="main-nav">
+                <button class="nav-link active" data-section="about">About</button>
+                <button class="nav-link" data-section="projects">Projects</button>
+                <button class="nav-link" data-section="journal">Journal</button>
+            </nav>
+        </header>
 
-        <main class="content">
-            <section id="home" class="tab-panel active">
-                <header class="page-heading">
-                    <h1>Hello from Dutch</h1>
-                </header>
-                <p>I come from a blue-collar background, and most of what I know comes from teaching myself, taking things apart, and building until they work. I've been pushing hard to break into tech by creating real projects — automation tools, crypto systems, AI agents, and anything else I can learn my way into. I'm not here to impress anyone — I just want to create stuff that matters.</p>
-            </section>
+        <main>
+            <!-- About Section -->
+            <section id="about" class="section active">
+                <div class="bio">
+                    <p>I come from a blue-collar background, and most of what I know comes from teaching myself, taking things apart, and building until they work. I've been pushing hard to break into tech by creating real projects — automation tools, crypto systems, AI agents, and anything else I can learn my way into.</p>
+                    
+                    <p>I'm not here to watch, I'm here to build.</p>
+                    
+                    <p>Looking for work as a Junior Developer or in any other tech role where I can contribute and keep growing. I've got a strong foundation in networking, systems, and sysadmin work, and while I may not have a CS degree, I have something just as valuable: a work ethic, a lot of grit, and a portfolio of real stuff I've built from the ground up.</p>
+                    
+                    <a href="https://dutchiono.github.io/ionoi.eth.sucks/resume.pdf" class="resume-link" download>Download Resume →</a>
+                </div>
 
-            <section id="projects" class="tab-panel">
-                <header class="page-heading">
-                    <h1>Projects</h1>
-                </header>
-
-                <div id="project-list">
-                    <!-- Projects will be loaded dynamically -->
+                <div class="links-section">
+                    <h2>Elsewhere</h2>
+                    <ul class="social-links">
+                        <li><a href="https://warpcast.com/ionoi" target="_blank">Warpcast</a></li>
+                        <li><a href="https://x.com/ionoi" target="_blank">X / Twitter</a></li>
+                        <li><a href="https://t.me/dutchiono" target="_blank">Telegram</a></li>
+                        <li><a href="https://discord.com/users/dutchiono" target="_blank">Discord</a></li>
+                        <li><a href="https://github.com/dutchiono" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:dutchiono@gmail.com">Email</a></li>
+                    </ul>
                 </div>
             </section>
 
-            <section id="journal" class="tab-panel">
-                <header class="page-heading">
-                    <h1>Musings</h1>
-                </header>
-                <div id="journal-list">
-                    <!-- Journal entries will be loaded dynamically -->
+            <!-- Projects Section -->
+            <section id="projects" class="section">
+                <div class="section-header">
+                    <h2>Current Projects</h2>
+                </div>
+                <div id="current-projects" class="projects-grid">
+                    <div class="loading">Loading projects...</div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Recent Work</h2>
+                </div>
+                <div id="recent-projects" class="projects-grid">
+                    <div class="loading">Loading projects...</div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Shipped</h2>
+                </div>
+                <div id="shipped-projects" class="projects-grid">
+                    <div class="loading">Loading projects...</div>
+                </div>
+            </section>
+
+            <!-- Journal Section -->
+            <section id="journal" class="section">
+                <div class="section-header">
+                    <h2>Journal</h2>
+                    <p class="section-subtitle">Intentional thinking about tech, crypto, automation, and building a career outside traditional routes.</p>
+                </div>
+                <div id="journal-entries" class="journal-grid">
+                    <div class="coming-soon">
+                        <p>Coming soon. Building in public, documenting the journey.</p>
+                    </div>
                 </div>
             </section>
         </main>
+
+        <footer>
+            <p>Built with intention. Deployed on ICP.</p>
+        </footer>
     </div>
 
     <script>
-        // Cache key for localStorage
-        const CACHE_KEY = 'projects_data';
-        const CACHE_DATE_KEY = 'projects_last_fetch_date';
-        const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+        // Tab Navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
 
-        // Check if cache is still valid
-        function isCacheValid() {
-            const lastFetch = localStorage.getItem(CACHE_DATE_KEY);
-            if (!lastFetch) return false;
-            return (Date.now() - parseInt(lastFetch)) < CACHE_DURATION;
-        }
-
-        const PROJECT_FILE = 'projects.json';
-
-        async function loadProjects() {
-            // Check if we have valid cached data
-            if (isCacheValid()) {
-                const cached = localStorage.getItem(CACHE_KEY);
-                if (cached) {
-                    const projectsData = JSON.parse(cached);
-                    renderProjects(projectsData.projects);
-                    renderJournal(projectsData.journal);
-                    return;
-                }
-            }
-
-            // Otherwise fetch fresh data
-            try {
-                const response = await fetch(PROJECT_FILE);
-                const projectsData = await response.json();
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const targetSection = link.dataset.section;
                 
-                // Store in cache
-                localStorage.setItem(CACHE_KEY, JSON.stringify(projectsData));
-                localStorage.setItem(CACHE_DATE_KEY, Date.now().toString());
+                navLinks.forEach(l => l.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                link.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
+            });
+        });
 
-                renderProjects(projectsData.projects);
-                renderJournal(projectsData.journal);
+        // Load Projects from JSON
+        async function loadProjects() {
+            try {
+                const cacheKey = 'projects_cache';
+                const cacheTimeKey = 'projects_cache_time';
+                const cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours
+
+                let projects;
+                const cachedData = localStorage.getItem(cacheKey);
+                const cachedTime = localStorage.getItem(cacheTimeKey);
+
+                if (cachedData && cachedTime && (Date.now() - parseInt(cachedTime) < cacheExpiry)) {
+                    projects = JSON.parse(cachedData);
+                } else {
+                    const response = await fetch('projects.json');
+                    if (!response.ok) throw new Error('Failed to load projects');
+                    projects = await response.json();
+                    
+                    localStorage.setItem(cacheKey, JSON.stringify(projects));
+                    localStorage.setItem(cacheTimeKey, Date.now().toString());
+                }
+
+                renderProjects(projects);
             } catch (error) {
-                console.error('Failed to load projects:', error);
-                document.getElementById('project-list').innerHTML = '<p class="error-message">A bug is stopping data from loading as I adjust. Don').t worry - we're on it! - Dutch</p>';
+                console.error('Error loading projects:', error);
+                document.querySelectorAll('.projects-grid').forEach(grid => {
+                    grid.innerHTML = '<div class="error">Unable to load projects. Check back soon.</div>';
+                });
             }
         }
 
-        function renderProjects(projects) {
-            const container = document.getElementById('project-list');
+        function renderProjects(projectsData) {
+            const current = projectsData.filter(p => p.status === 'current');
+            const recent = projectsData.filter(p => p.status === 'recent');
+            const shipped = projectsData.filter(p => p.status === 'shipped');
+
+            renderProjectGroup('current-projects', current);
+            renderProjectGroup('recent-projects', recent);
+            renderProjectGroup('shipped-projects', shipped);
+        }
+
+        function renderProjectGroup(containerId, projects) {
+            const container = document.getElementById(containerId);
+            
             if (!projects || projects.length === 0) {
-                container.innerHTML = '<p>No projects yet.</p>';
+                container.innerHTML = '<div class="empty">No projects yet.</div>';
                 return;
             }
 
             container.innerHTML = projects.map(project => `
-                <article class="project-card">
+                <div class="project-card">
                     <div class="project-header">
-                        <h2>${project.name}</h2>
-                        ${project.url ? `<a href="${project.url}" target="_blank" rel="noreferrer" class="project-link">↗</a>` : ''}
+                        <h3>${project.name}</h3>
+                        ${project.url ? `<a href="${project.url}" target="_blank" class="project-link" aria-label="Visit ${project.name}">↗</a>` : ''}
                     </div>
-                    <div class="project-meta">
-                        ${project.date ? `<span class="project-date">${project.date}</span>` : ''}
-                        ${project.status ? `<span class="project-status">${project.status}</span>` : ''}
-                    </div>
-                    ${project.description ? `<p class="project-description">${project.description}</p>` : ''}
+                    <p class="project-description">${project.description}</p>
                     ${project.tags && project.tags.length > 0 ? `
                         <div class="project-tags">
                             ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                         </div>
                     ` : ''}
-                </article>
+                </div>
             `).join('');
         }
 
-        function renderJournal(journals) {
-            const container = document.getElementById('journal-list');
-            if (!journals || journals.length === 0) {
-                container.innerHTML = '<p>No entries yet.</p>';
-                return;
-            }
-
-            container.innerHTML = journals.map(entry => `
-                <article class="journal-entry">
-                    <header class="journal-header">
-                        <h3>${entry.title}</h3>
-                        ${entry.date ? `<time>${entry.date}</time>` : ''}
-                    </header>
-                    ${entry.content ? `<p>${entry.content}</p>` : ''}
-                </article>
-            `).join('');
-        }
-
-        // Tab switching logic
-        const tabButtons = document.querySelectorAll('.tab');
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const tabId = button.dataset.tab;
-                
-                // Remove active class from all tabs and panels
-                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-                document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-                
-                // Add active class to clicked tab and corresponding panel
-                button.classList.add('active');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        // Handle sharing from other apps within the frame
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const { sdk } = window.farcasterSdk;
-                sdk.actions.shareUrl({
-                    url: 'https://dutchiono.github.io/ionoi.eth.sucks'
-                });
-            } catch(e) { /* not in Farcaster Frames context */ }
-        });
-
-        // Load projects when page loads
+        // Initialize
         loadProjects();
     </script>
 </body>
