@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Trump SOTU Bingo 2026 - Play along live with friends!">
+    <meta property="og:title" content="Trump SOTU Bingo 2026">
+    <meta property="og:description" content="Interactive bingo + group chat for Trump's State of the Union. How fast can you get Bingo?">
+    <meta property="og:url" content="https://dutchiono.github.io/ionoi.eth.sucks/bingo.html">
+    <meta name="fc:miniapp" content='{"version":"1","name":"SOTU Bingo","iconUrl":"https://dutchiono.github.io/ionoi.eth.sucks/icon.png","homeUrl":"https://dutchiono.github.io/ionoi.eth.sucks/bingo.html","imageUrl":"https://dutchiono.github.io/ionoi.eth.sucks/image.png","buttonTitle":"Play Bingo","splashImageUrl":"https://dutchiono.github.io/ionoi.eth.sucks/splash.png","splashBackgroundColor":"#0b0d1b"}'>
+    <script src="https://unpkg.com/@farcaster/miniapp-sdk@latest/dist/index.umd.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Trump SOTU Bingo 2026</title>
+    <style>
+        /* ---- BINGO PAGE OVERRIDES ---- */
+        body {
+            background: var(--bg);
+        }
+
+        .bingo-page .container {
+            max-width: 900px;
+        }
+
+        /* ---- USERNAME GATE ---- */
+        #username-gate {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 1.5rem;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        #username-gate h1 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        #username-gate h1 span {
+            color: var(--accent);
+        }
+
+        #username-gate .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 420px;
+            margin: 0;
+        }
+
+        .username-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .username-form input {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: center;
+        }
+
+        .username-form input:focus {
+            border-color: var(--accent);
+        }
+
+        .username-form input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: #0a0a0f;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .trump-emoji-banner {
+            font-size: 3rem;
+            filter: grayscale(0);
+            animation: wobble 2s ease-in-out infinite;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        /* ---- MAIN GAME LAYOUT ---- */
+        #game-area {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding-bottom: 3rem;
+        }
+
+        #game-area.visible {
+            display: flex;
+        }
+
+        /* ---- GAME HEADER ---- */
+        .game-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .game-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .game-title span {
+            color: var(--accent);
+        }
+
+        .player-badge {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            padding: 0.4rem 0.9rem;
+        }
+
+        .player-badge strong {
+            color: var(--accent);
+        }
+
+        /* ---- BINGO BOARD ---- */
+        .board-container {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            overflow: hidden;
+        }
+
+        .bingo-header-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .bingo-letter {
+            color: var(--accent);
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 0.3rem 0;
+        }
+
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        .bingo-cell {
+            aspect-ratio: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.5rem, 1.5vw, 0.72rem);
+            font-weight: 500;
+            line-height: 1.2;
+            padding: 0.3rem;
+            text-align: center;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+            user-select: none;
+            color: var(--text-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bingo-cell:hover {
+            border-color: var(--accent);
+            color: var(--text);
+            transform: scale(1.04);
+            z-index: 1;
+        }
+
+        .bingo-cell.marked {
+            background: rgba(58, 221, 194, 0.15);
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .bingo-cell.marked::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(58,221,194,0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .bingo-cell.free-space {
+            background: rgba(58, 221, 194, 0.25);
+            border-color: var(--accent);
+            color: var(--accent);
+            cursor: default;
+            font-size: clamp(0.55rem, 1.4vw, 0.75rem);
+            font-weight: 700;
+        }
+
+        .bingo-cell.free-space:hover {
+            transform: none;
+        }
+
+        .bingo-cell.winning {
+            background: rgba(58, 221, 194, 0.35);
+            border-color: var(--accent);
+            animation: pulse-win 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-win {
+            from { box-shadow: 0 0 0 0 rgba(58,221,194,0.4); }
+            to   { box-shadow: 0 0 12px 4px rgba(58,221,194,0.25); }
+        }
+
+        /* ---- BINGO WIN BANNER ---- */
+        .win-banner {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(58, 221, 194, 0.12);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .win-banner.visible {
+            display: flex;
+        }
+
+        .win-banner-text {
+            flex: 1;
+        }
+
+        .win-banner h3 {
+            color: var(--accent);
+            margin: 0 0 0.25rem;
+            font-size: 1.1rem;
+        }
+
+        .win-banner p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            padding: 0.5rem 0.9rem;
+            transition: border-color 0.2s, color 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-reset:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ---- STATS ROW ---- */
+        .stats-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            padding: 0.35rem 0.85rem;
+        }
+
+        .stat-pill strong {
+            color: var(--text);
+        }
+
+        /* ---- GROUP CHAT ---- */
+        .chat-container {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+            padding: 0.85rem 1rem;
+        }
+
+        .chat-header h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .chat-online {
+            align-items: center;
+            color: var(--text-tertiary);
+            display: flex;
+            font-size: 0.78rem;
+            gap: 0.35rem;
+        }
+
+        .online-dot {
+            background: #3adc6e;
+            border-radius: 50%;
+            display: inline-block;
+            height: 7px;
+            width: 7px;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            height: 280px;
+            overflow-y: auto;
+            padding: 0.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .chat-msg {
+            animation: fadeIn 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .chat-msg .msg-meta {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .chat-msg .msg-user {
+            color: var(--accent);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .chat-msg.system .msg-user {
+            color: #f5a623;
+        }
+
+        .chat-msg .msg-time {
+            color: var(--text-tertiary);
+            font-size: 0.68rem;
+        }
+
+        .chat-msg .msg-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.4;
+            padding-left: 0;
+        }
+
+        .chat-msg.system .msg-text {
+            color: #f5a623;
+            font-style: italic;
+        }
+
+        .chat-msg.bingo-call .msg-text {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .chat-input-row {
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .chat-input {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            flex: 1;
+            font-family: inherit;
+            font-size: 0.875rem;
+            outline: none;
+            padding: 0.55rem 0.85rem;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .btn-send {
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: #0a0a0f;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.55rem 1rem;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-send:hover {
+            background: var(--accent-hover);
+        }
+
+        /* ---- HOW TO PLAY ---- */
+        .how-to-play {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+        }
+
+        .how-to-play h4 {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            margin: 0 0 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .how-to-play ul {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .how-to-play ul li::before {
+            content: '-> ';
+            color: var(--accent);
+        }
+
+        /* ---- NAV BACK LINK ---- */
+        .back-link {
+            color: var(--text-tertiary);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
+            margin-bottom: 0.5rem;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (min-width: 680px) {
+            #game-area {
+                display: none;
+            }
+            #game-area.visible {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "header header"
+                    "board chat"
+                    "stats stats"
+                    "rules rules";
+            }
+
+            .game-header  { grid-area: header; }
+            .board-section { grid-area: board; }
+            .chat-section  { grid-area: chat; }
+            .stats-section { grid-area: stats; }
+            .rules-section { grid-area: rules; }
+
+            .win-banner { grid-area: header; margin-top: 0.5rem; }
+        }
+
+        @media (max-width: 400px) {
+            .bingo-cell {
+                font-size: 0.48rem;
+                padding: 0.2rem;
+            }
+            .bingo-letter {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bingo-page">
+<div class="container">
+
+    <!-- ===== USERNAME GATE ===== -->
+    <div id="username-gate">
+        <div class="trump-emoji-banner">*</div>
+        <h1>Trump <span>SOTU</span> Bingo<br>2026</h1>
+        <p class="subtitle">
+            He said it would be a LONG speech. The best speech. Nobody's ever given a speech like this.
+            Play along with friends tonight.
+        </p>
+        <div class="username-form">
+            <input
+                type="text"
+                id="username-input"
+                placeholder="Enter your username"
+                maxlength="24"
+                autocomplete="off"
+                spellcheck="false"
+            >
+            <button class="btn-primary" id="start-btn">Let's Play ->  </button>
+        </div>
+        <a href="index.html" class="back-link">Back to ionoi.eth.sucks</a>
+    </div>
+
+    <!-- ===== MAIN GAME AREA ===== -->
+    <div id="game-area">
+
+        <!-- Header -->
+        <div class="game-header">
+            <div>
+                <a href="index.html" class="back-link">&#8592; Home</a>
+                <h2 class="game-title">Trump <span>SOTU</span> Bingo 2026</h2>
+            </div>
+            <div class="player-badge">Playing as <strong id="display-username"></strong></div>
+        </div>
+
+        <!-- Win Banner (hidden until bingo) -->
+        <div class="win-banner" id="win-banner">
+            <div class="win-banner-text">
+                <h3>BINGO! You win!</h3>
+                <p id="win-detail">You got a line. Congratulations, or something.</p>
+            </div>
+            <button class="btn-reset" id="reset-btn">New Card</button>
+        </div>
+
+        <!-- Board Section -->
+        <div class="board-section">
+            <div class="board-container">
+                <div class="bingo-header-row">
+                    <div class="bingo-letter">B</div>
+                    <div class="bingo-letter">I</div>
+                    <div class="bingo-letter">N</div>
+                    <div class="bingo-letter">G</div>
+                    <div class="bingo-letter">O</div>
+                </div>
+                <div class="bingo-grid" id="bingo-grid"></div>
+            </div>
+            <div class="stats-section" style="margin-top:0.75rem;">
+                <div class="stats-row" id="stats-row">
+                    <div class="stat-pill">Marked: <strong id="marked-count">0</strong> / 24</div>
+                    <div class="stat-pill">Players: <strong id="player-count">1</strong></div>
+                    <div class="stat-pill" id="bingo-stat" style="display:none;">BINGO x<strong id="bingo-count">0</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3>Group Chat</h3>
+                    <div class="chat-online">
+                        <span class="online-dot"></span>
+                        <span id="online-label">Live</span>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input-row">
+                    <input
+                        type="text"
+                        class="chat-input"
+                        id="chat-input"
+                        placeholder="Say something..."
+                        maxlength="200"
+                        autocomplete="off"
+                    >
+                    <button class="btn-send" id="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rules -->
+        <div class="rules-section" style="margin-top:0.25rem;">
+            <div class="how-to-play">
+                <h4>How to Play</h4>
+                <ul>
+                    <li>Watch Trump's State of the Union (Feb 24, 2026, 9pm ET)</li>
+                    <li>Click a square when Trump says that word or phrase</li>
+                    <li>Get 5 in a row (horizontal, vertical, or diagonal) to win</li>
+                    <li>Center square is a FREE SPACE</li>
+                    <li>Chat reacts in real-time across all open tabs/windows</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// ============================================================
+//  BINGO SQUARES — 24 squares + 1 FREE center
+//  Pulled from real 2026 SOTU coverage + Trump speech patterns
+// ============================================================
+const ALL_SQUARES = [
+    // Classic Trump verbal tics
+    "We inherited a mess",
+    "Tremendous success",
+    "Total disaster",
+    "The likes of which nobody's ever seen",
+    "America is BACK",
+    // Economy / tariffs
+    "Tariffs (my favorite word)",
+    "Affordability hoax",
+    "Eggs are cheap now",
+    "Gasoline under $2",
+    "Stock market record",
+    // Enemies / insults
+    "Barack Hussein Obama",
+    "Kamala",
+    "Biden — worst president ever",
+    "Autopen",
+    "Trump Derangement Syndrome",
+    "Losers",
+    "Incompetent",
+    "Governor Gavin New-Scum",
+    "Marjorie Traitor Greene",
+    // Foreign policy / war
+    "Iran deal (or else)",
+    "B-2 bombers",
+    "Ukraine/Russia deal",
+    "Maduro / Venezuela",
+    "Nobel Peace Prize",
+    // Domestic / fun
+    "Beautiful clean coal",
+    "Windmills (they kill birds)",
+    "Big beautiful bill",
+    "Ballroom / marble",
+    "UFC fight / South Lawn",
+    "America 250",
+    "Melania",
+    "Election fraud",
+    "Epstein files",
+    "DOGE / Elon",
+    "I'm not going to heaven",
+    "Numbskull Jerome Powell",
+    "Biden Green New Scam",
+    "They hate our country",
+    "This is a Democrat shutdown",
+    "He's taking the fat drug",
+];
+
+// Fisher-Yates shuffle
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function generateCard() {
+    return shuffle(ALL_SQUARES).slice(0, 24);
+}
+
+// ============================================================
+//  STATE
+// ============================================================
+const STORAGE_KEY = 'sotu_bingo_2026';
+const CHAT_KEY    = 'sotu_bingo_chat_2026';
+const SESSION_KEY = 'sotu_bingo_session';
+
+let username   = '';
+let cardSquares = [];   // 24 items
+let markedSet   = new Set();  // indices 0-24 (12 = free)
+let bingoCount  = 0;
+let lastChatTs  = 0;
+let chatPollInterval = null;
+
+// ============================================================
+//  DOM REFS
+// ============================================================
+const gate        = document.getElementById('username-gate');
+const gameArea    = document.getElementById('game-area');
+const usernameIn  = document.getElementById('username-input');
+const startBtn    = document.getElementById('start-btn');
+const displayUser = document.getElementById('display-username');
+const bingoGrid   = document.getElementById('bingo-grid');
+const chatMsgs    = document.getElementById('chat-messages');
+const chatInput   = document.getElementById('chat-input');
+const sendBtn     = document.getElementById('send-btn');
+const markedCount = document.getElementById('marked-count');
+const playerCount = document.getElementById('player-count');
+const bingoStat   = document.getElementById('bingo-stat');
+const bingoCountEl= document.getElementById('bingo-count');
+const winBanner   = document.getElementById('win-banner');
+const winDetail   = document.getElementById('win-detail');
+const resetBtn    = document.getElementById('reset-btn');
+const onlineLabel = document.getElementById('online-label');
+
+// ============================================================
+//  USERNAME GATE
+// ============================================================
+startBtn.addEventListener('click', enterGame);
+usernameIn.addEventListener('keydown', e => { if (e.key === 'Enter') enterGame(); });
+
+function enterGame() {
+    const val = usernameIn.value.trim().replace(/[^a-zA-Z0-9_\-.]/g, '').slice(0, 24);
+    if (!val) {
+        usernameIn.style.borderColor = '#e05c5c';
+        usernameIn.placeholder = 'Pick a username first!';
+        setTimeout(() => {
+            usernameIn.style.borderColor = '';
+            usernameIn.placeholder = 'Enter your username';
+        }, 1500);
+        return;
+    }
+    username = val;
+
+    // Load or generate card
+    const saved = loadState();
+    if (saved && saved.username === username) {
+        cardSquares = saved.card;
+        markedSet   = new Set(saved.marked);
+        bingoCount  = saved.bingoCount || 0;
+    } else {
+        cardSquares = generateCard();
+        markedSet   = new Set([12]); // free space
+        bingoCount  = 0;
+        saveState();
+    }
+
+    // Register presence
+    registerPresence();
+
+    // Show game
+    gate.style.display = 'none';
+    gameArea.classList.add('visible');
+    displayUser.textContent = username;
+
+    buildBoard();
+    updateStats();
+    startChatPoll();
+    postSystemMsg(username + ' joined the game!');
+    loadChatHistory();
+}
+
+// ============================================================
+//  PERSISTENCE (localStorage)
+// ============================================================
+function saveState() {
+    const data = {
+        username,
+        card: cardSquares,
+        marked: [...markedSet],
+        bingoCount,
+        ts: Date.now()
+    };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function loadState() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch(e) { return null; }
+}
+
+function registerPresence() {
+    // Store session presence with timestamp so other tabs can count players
+    try {
+        const sessions = getPresenceSessions();
+        sessions[username] = Date.now();
+        localStorage.setItem(SESSION_KEY, JSON.stringify(sessions));
+    } catch(e) {}
+}
+
+function getPresenceSessions() {
+    try {
+        const raw = localStorage.getItem(SESSION_KEY);
+        if (!raw) return {};
+        return JSON.parse(raw);
+    } catch(e) { return {}; }
+}
+
+function countActivePlayers() {
+    const sessions = getPresenceSessions();
+    const cutoff = Date.now() - 60000; // active in last 60s
+    return Object.values(sessions).filter(ts => ts > cutoff).length || 1;
+}
+
+// ============================================================
+//  BOARD BUILDER
+// ============================================================
+function buildBoard() {
+    bingoGrid.innerHTML = '';
+    for (let i = 0; i < 25; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'bingo-cell';
+        cell.dataset.idx = i;
+
+        if (i === 12) {
+            // FREE SPACE
+            cell.classList.add('free-space', 'marked');
+            cell.textContent = 'FREE SPACE';
+        } else {
+            const sqIdx = i < 12 ? i : i - 1; // map grid pos to square array
+            cell.textContent = cardSquares[sqIdx];
+            if (markedSet.has(i)) cell.classList.add('marked');
+            cell.addEventListener('click', () => toggleCell(i, cell));
+        }
+
+        bingoGrid.appendChild(cell);
+    }
+    highlightWins();
+}
+
+function toggleCell(gridIdx, cell) {
+    if (gridIdx === 12) return; // free space
+
+    if (markedSet.has(gridIdx)) {
+        markedSet.delete(gridIdx);
+        cell.classList.remove('marked');
+    } else {
+        markedSet.add(gridIdx);
+        cell.classList.add('marked');
+
+        // Get the square text for chat notification
+        const sqIdx = gridIdx < 12 ? gridIdx : gridIdx - 1;
+        const squareText = cardSquares[sqIdx];
+        postSystemMsg(username + ' marked: "' + squareText + '"');
+    }
+
+    updateStats();
+    saveState();
+    const won = highlightWins();
+    if (won && !winBanner.classList.contains('visible')) {
+        announceWin(won);
+    }
+}
+
+// ============================================================
+//  WIN DETECTION
+// ============================================================
+// Grid is 5x5, indices 0-24
+const LINES = [
+    // rows
+    [0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],
+    // cols
+    [0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],
+    // diagonals
+    [0,6,12,18,24],[4,8,12,16,20]
+];
+
+function highlightWins() {
+    // Remove all winning classes first
+    document.querySelectorAll('.bingo-cell.winning').forEach(c => c.classList.remove('winning'));
+
+    let winningLine = null;
+    for (const line of LINES) {
+        if (line.every(idx => markedSet.has(idx))) {
+            line.forEach(idx => {
+                const cell = bingoGrid.children[idx];
+                if (cell) cell.classList.add('winning');
+            });
+            winningLine = line;
+        }
+    }
+    return winningLine;
+}
+
+function announceWin(line) {
+    bingoCount++;
+    saveState();
+    bingoStat.style.display = '';
+    bingoCountEl.textContent = bingoCount;
+    winBanner.classList.add('visible');
+    winDetail.textContent = 'That\'s BINGO #' + bingoCount + '. Congrats, I guess.';
+    postBingoMsg(username + ' called BINGO!');
+}
+
+resetBtn.addEventListener('click', () => {
+    cardSquares = generateCard();
+    markedSet   = new Set([12]);
+    bingoCount  = 0;
+    winBanner.classList.remove('visible');
+    bingoStat.style.display = 'none';
+    saveState();
+    buildBoard();
+    updateStats();
+});
+
+// ============================================================
+//  STATS
+// ============================================================
+function updateStats() {
+    const cnt = markedSet.size - 1; // exclude free space
+    markedCount.textContent = Math.max(0, cnt);
+    registerPresence();
+    playerCount.textContent = countActivePlayers();
+}
+
+// ============================================================
+//  CHAT (BroadcastChannel + localStorage fallback)
+// ============================================================
+let bc = null;
+try {
+    bc = new BroadcastChannel('sotu_bingo_2026_chat');
+} catch(e) { bc = null; }
+
+function getChatHistory() {
+    try {
+        const raw = localStorage.getItem(CHAT_KEY);
+        if (!raw) return [];
+        return JSON.parse(raw);
+    } catch(e) { return []; }
+}
+
+function saveChatMsg(msg) {
+    try {
+        const history = getChatHistory();
+        history.push(msg);
+        // Keep last 200 messages
+        if (history.length > 200) history.splice(0, history.length - 200);
+        localStorage.setItem(CHAT_KEY, JSON.stringify(history));
+    } catch(e) {}
+}
+
+function loadChatHistory() {
+    const history = getChatHistory();
+    // Only render last 40
+    const recent = history.slice(-40);
+    recent.forEach(msg => renderMsg(msg, false));
+    scrollChat();
+}
+
+function postMsg(text, type = 'user') {
+    const msg = {
+        user: username,
+        text,
+        type,
+        ts: Date.now()
+    };
+    saveChatMsg(msg);
+    renderMsg(msg, true);
+    if (bc) bc.postMessage(msg);
+}
+
+function postSystemMsg(text) {
+    const msg = { user: 'system', text, type: 'system', ts: Date.now() };
+    saveChatMsg(msg);
+    renderMsg(msg, true);
+    if (bc) bc.postMessage(msg);
+}
+
+function postBingoMsg(text) {
+    const msg = { user: username, text, type: 'bingo-call', ts: Date.now() };
+    saveChatMsg(msg);
+    renderMsg(msg, true);
+    if (bc) bc.postMessage(msg);
+}
+
+function renderMsg(msg, scroll) {
+    const el = document.createElement('div');
+    el.className = 'chat-msg ' + (msg.type || 'user');
+
+    const time = new Date(msg.ts);
+    const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    el.innerHTML =
+        '<div class="msg-meta">' +
+        '<span class="msg-user">' + escHtml(msg.user) + '</span>' +
+        '<span class="msg-time">' + timeStr + '</span>' +
+        '</div>' +
+        '<div class="msg-text">' + escHtml(msg.text) + '</div>';
+
+    chatMsgs.appendChild(el);
+    if (scroll) scrollChat();
+}
+
+function scrollChat() {
+    chatMsgs.scrollTop = chatMsgs.scrollHeight;
+}
+
+function escHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+// Send button
+sendBtn.addEventListener('click', sendChat);
+chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+function sendChat() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    chatInput.value = '';
+    postMsg(text, 'user');
+}
+
+// BroadcastChannel listener (same-browser cross-tab)
+if (bc) {
+    bc.onmessage = (e) => {
+        renderMsg(e.data, true);
+    };
+}
+
+// Fallback polling (for different browsers / devices on same network who share storage via sync)
+// Since localStorage is per-origin (not cross-device), we supplement with polling for
+// the same-browser multi-tab experience. Cross-device would need a backend.
+function startChatPoll() {
+    lastChatTs = Date.now();
+    chatPollInterval = setInterval(() => {
+        registerPresence();
+        playerCount.textContent = countActivePlayers();
+    }, 15000);
+}
+
+// ============================================================
+//  ONLINE INDICATOR
+// ============================================================
+setInterval(() => {
+    onlineLabel.textContent = countActivePlayers() + ' online';
+}, 5000);
+
+// ============================================================
+//  FARCASTER SDK INIT (optional — won't break if not in mini-app)
+// ============================================================
+try {
+    if (window.farcasterMiniApp) {
+        window.farcasterMiniApp.sdk.actions.ready();
+    }
+} catch(e) {}
+</script>
+</body>
+</html>
