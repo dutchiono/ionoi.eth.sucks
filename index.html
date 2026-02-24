@@ -30,6 +30,7 @@
                 <button class="nav-link active" data-section="about">About</button>
                 <button class="nav-link" data-section="projects">Projects</button>
                 <button class="nav-link" data-section="journal">Journal</button>
+                <a href="bingo.html" class="nav-link" style="text-decoration:none;">Bingo</a>
             </nav>
         </header>
 
@@ -43,138 +44,171 @@
                     <p>
                         Learning through doing: React Native apps, Python automation, blockchain integration, and system design. Every project is a lesson, every failure is data.
                     </p>
-                    <a href="https://docs.google.com/document/d/1Xhfb1THEk_XwY1b0HFJcDIPdqjP0SqCuZmHLDX3PNYM/edit?usp=sharing" class="resume-link" target="_blank" rel="noopener">View Resume →</a>
+                    <a href="https://docs.google.com/document/d/1Xhfb1THE k_XwY1b0HFJcDIPdqjP0SqCuZml0D7X3PNYM/edit?usp=sharing" class="resume-link" target="_blank" rel="noopener">View Resume →</a>
                 </div>
 
-                <div class="links-section">
-                    <h2>Connect</h2>
-                    <ul class="social-links">
-                        <li><a href="https://github.com/dutchiono" target="_blank" rel="noopener">GitHub</a></li>
-                        <li><a href="https://warpcast.com/ionoi.eth" target="_blank" rel="noopener">Warpcast</a></li>
-                        <li><a href="https://x.com/ionoi_eth" target="_blank" rel="noopener">X/Twitter</a></li>
-                        <li><a href="https://t.me/ionoieth" target="_blank" rel="noopener">Telegram</a></li>
+                <div class="connect">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="https://warpcast.com/dutchiono" class="social-link" target="_blank" rel="noopener">
+                            <img src="warpcastlogo.svg" alt="Warpcast">
+                            <span>Warpcast</span>
+                        </a>
+                        <a href="https://x.com/dutchiono" class="social-link" target="_blank" rel="noopener">
+                            <img src="twitterlogo.svg" alt="X">
+                            <span>X</span>
+                        </a>
+                        <a href="https://github.com/iono-such-things" class="social-link" target="_blank" rel="noopener">
+                            <img src="githublogo.svg" alt="GitHub">
+                            <span>GitHub</span>
+                        </a>
+                        <a href="https://t.me/dutchiono" class="social-link" target="_blank" rel="noopener">
+                            <img src="telegramlogo.svg" alt="Telegram">
+                            <span>Telegram</span>
+                        </a>
+                        <a href="mailto:dutchiono@gmail.com" class="social-link">
+                            <img src="emaillogo.svg" alt="Email">
+                            <span>Email</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="current-focus">
+                    <h3>Currently Working On</h3>
+                    <ul>
+                        <li><strong>FusionClaw:</strong> Advanced Twitter monitoring system with real-time alerts, automated trading signals, and AI-powered sentiment analysis</li>
+                        <li><strong>NullPriest:</strong> Autonomous GitHub agent that watches repositories, triages issues, and executes automated fixes</li>
+                        <li><strong>Nebula AI Agent:</strong> Building autonomous workflows with task management and multi-platform integration</li>
+                        <li><strong>Crypto Trading Tools:</strong> Automated bot monitoring, signal generation, and position tracking systems</li>
                     </ul>
                 </div>
             </section>
 
             <!-- Projects Section -->
             <section id="projects" class="section">
-                <div class="section-header">
-                    <h2>Projects</h2>
-                    <p class="section-subtitle">Real tools solving real problems</p>
-                </div>
-
                 <div class="projects-grid">
                     <div class="project-card">
                         <div class="project-header">
-                            <h3>SSHappy</h3>
-                            <a href="https://github.com/dutchiono/sshappy" class="project-link" target="_blank" rel="noopener">→</a>
+                            <div class="project-icon">🦀</div>
+                            <h3>FusionClaw</h3>
                         </div>
                         <p class="project-description">
-                            Mobile SSH client for iOS & Android. Manage servers, execute commands, monitor resources—all from your phone. Built with React Native, currently in development.
+                            Real-time Twitter monitoring system with advanced filtering, automated trading signals, and sentiment analysis. Built for crypto traders who need edge.
                         </p>
-                        <div class="project-tags">
-                            <span class="tag">React Native</span>
-                            <span class="tag">SSH/SFTP</span>
-                            <span class="tag">Mobile</span>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Twitter API</span>
+                            <span class="tech-tag">Async</span>
                         </div>
+                        <a href="https://github.com/iono-such-things/fusionclaw" class="project-link" target="_blank" rel="noopener">View on GitHub →</a>
                     </div>
 
                     <div class="project-card">
                         <div class="project-header">
-                            <h3>Polymarket Edge Detector</h3>
-                            <a href="#" class="project-link">→</a>
+                            <div class="project-icon">🤖</div>
+                            <h3>NullPriest</h3>
                         </div>
                         <p class="project-description">
-                            AI agent that spots mispriced prediction markets by cross-referencing Polymarket odds with real-time research. Automated arbitrage and value-betting detection.
+                            Autonomous GitHub agent that monitors repositories, triages issues based on strategy docs, and executes automated fixes. Building in public.
                         </p>
-                        <div class="project-tags">
-                            <span class="tag">Python</span>
-                            <span class="tag">AI Agents</span>
-                            <span class="tag">Trading</span>
+                        <div class="project-tech">
+                            <span class="tech-tag">GitHub API</span>
+                            <span class="tech-tag">Automation</span>
+                            <span class="tech-tag">AI</span>
                         </div>
+                        <a href="https://github.com/iono-such-things/nullpriest" class="project-link" target="_blank" rel="noopener">View on GitHub →</a>
                     </div>
 
                     <div class="project-card">
                         <div class="project-header">
-                            <h3>Base Chain Signal Monitor</h3>
-                            <a href="#" class="project-link">→</a>
+                            <div class="project-icon">📱</div>
+                            <h3>Bolt</h3>
                         </div>
                         <p class="project-description">
-                            Real-time on-chain intelligence for Base network. Tracks new tokens, liquidity shifts, whale movements, and rug-pull risks before they hit mainstream.
+                            React Native app for fast mobile crypto trading and portfolio management. Clean UI, real-time data, smooth animations.
                         </p>
-                        <div class="project-tags">
-                            <span class="tag">Blockchain</span>
-                            <span class="tag">DeFi</span>
-                            <span class="tag">Monitoring</span>
+                        <div class="project-tech">
+                            <span class="tech-tag">React Native</span>
+                            <span class="tech-tag">Expo</span>
+                            <span class="tech-tag">Mobile</span>
                         </div>
+                        <a href="https://github.com/iono-such-things/bolt" class="project-link" target="_blank" rel="noopener">View on GitHub →</a>
                     </div>
 
                     <div class="project-card">
                         <div class="project-header">
-                            <h3>Crypto Social Sentiment Monitor</h3>
-                            <a href="#" class="project-link">→</a>
+                            <div class="project-icon">⚡</div>
+                            <h3>Trading Tools</h3>
                         </div>
                         <p class="project-description">
-                            AI-driven system tracking crypto sentiment across Twitter, Reddit, and news sources. Spots emerging trends and token mentions before major price moves.
+                            Collection of Python scripts for crypto automation: bot monitoring, signal tracking, position management, and profit calculation.
                         </p>
-                        <div class="project-tags">
-                            <span class="tag">NLP</span>
-                            <span class="tag">Social Analytics</span>
-                            <span class="tag">Crypto</span>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">APIs</span>
+                            <span class="tech-tag">Automation</span>
                         </div>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="project-header">
-                            <h3>Quick Actions System</h3>
-                            <a href="#" class="project-link">→</a>
-                        </div>
-                        <p class="project-description">
-                            Framework for automating repetitive DevOps tasks. Schema-driven templates, async execution, rollbacks, and audit trails. Turns ad-hoc scripts into reliable workflows.
-                        </p>
-                        <div class="project-tags">
-                            <span class="tag">DevOps</span>
-                            <span class="tag">Automation</span>
-                            <span class="tag">Python</span>
-                        </div>
-                    </div>
-
-                    <div class="project-card">
-                        <div class="project-header">
-                            <h3>Server Health Monitor</h3>
-                            <a href="#" class="project-link">→</a>
-                        </div>
-                        <p class="project-description">
-                            Automated uptime tracking and alerting system. Monitors CPU, memory, disk usage with intelligent notifications. Eliminates unplanned downtime through early detection.
-                        </p>
-                        <div class="project-tags">
-                            <span class="tag">Monitoring</span>
-                            <span class="tag">SRE</span>
-                            <span class="tag">Alerts</span>
-                        </div>
+                        <a href="https://github.com/iono-such-things" class="project-link" target="_blank" rel="noopener">View on GitHub →</a>
                     </div>
                 </div>
             </section>
 
             <!-- Journal Section -->
             <section id="journal" class="section">
-                <div class="section-header">
-                    <h2>Journal</h2>
-                    <p class="section-subtitle">Lessons learned, mistakes made</p>
-                </div>
-                <div class="journal-grid">
-                    <p class="coming-soon">Coming soon...</p>
+                <div class="journal-content">
+                    <article class="journal-entry">
+                        <div class="entry-header">
+                            <h3>The Non-Traditional Path</h3>
+                            <time>2024</time>
+                        </div>
+                        <p>
+                            No CS degree. No bootcamp. Just building things and learning from what breaks. Every project teaches something new: API design, system architecture, user experience, deployment, monitoring.
+                        </p>
+                        <p>
+                            The goal isn't perfection—it's shipping real products that solve real problems. Code quality improves with each iteration. System design patterns emerge from experience. Skills compound.
+                        </p>
+                    </article>
+
+                    <article class="journal-entry">
+                        <div class="entry-header">
+                            <h3>Why Build in Public</h3>
+                            <time>2024</time>
+                        </div>
+                        <p>
+                            Public accountability forces better decisions. Documentation becomes a feature, not an afterthought. User feedback shapes development. Transparency builds trust.
+                        </p>
+                        <p>
+                            Every commit, every issue, every decision is visible. This creates pressure to maintain standards and follow through on commitments. It's uncomfortable. It works.
+                        </p>
+                    </article>
+
+                    <article class="journal-entry">
+                        <div class="entry-header">
+                            <h3>Learning Stack</h3>
+                            <time>Ongoing</time>
+                        </div>
+                        <p>
+                            <strong>Currently Learning:</strong> Advanced async patterns, distributed systems, AI agent frameworks, blockchain development, real-time data processing
+                        </p>
+                        <p>
+                            <strong>Next Up:</strong> Rust for performance-critical components, more complex system architecture patterns, advanced trading strategies, machine learning for signal generation
+                        </p>
+                    </article>
                 </div>
             </section>
         </main>
 
         <footer>
-            <p>&copy; 2025 Dutch Iono. Built with curiosity and caffeine.</p>
+            <p>&copy; 2024 Dutch Iono. Building in public.</p>
         </footer>
     </div>
 
     <script>
+        // Farcaster Mini App initialization
+        if (window.farcasterMiniApp) {
+            window.farcasterMiniApp.sdk.actions.ready();
+        }
+
         // Navigation functionality
         const navLinks = document.querySelectorAll('.nav-link');
         const sections = document.querySelectorAll('.section');
@@ -183,28 +217,15 @@
             link.addEventListener('click', () => {
                 const targetSection = link.getAttribute('data-section');
                 
-                // Update active nav link
+                // Remove active class from all links and sections
                 navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
+                sections.forEach(s => s.classList.remove('active'));
                 
-                // Update active section
-                sections.forEach(section => {
-                    section.classList.remove('active');
-                    if (section.id === targetSection) {
-                        section.classList.add('active');
-                    }
-                });
+                // Add active class to clicked link and corresponding section
+                link.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
             });
         });
-
-        // Farcaster Miniapp initialization
-        if (typeof window.FarcasterMiniApp !== 'undefined') {
-            window.FarcasterMiniApp.init().then(() => {
-                console.log('Farcaster Miniapp initialized');
-            }).catch(err => {
-                console.error('Farcaster Miniapp initialization error:', err);
-            });
-        }
     </script>
 </body>
 </html>
