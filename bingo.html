@@ -495,8 +495,8 @@ function enterGame() {
     buildBoard();
     updateStats();
     startChatPoll();
-    postSystemMsg(username + ' joined the game!');
     loadChatHistory();
+    postSystemMsg(username + ' joined the game!');
 }
 
 // ============================================================
@@ -664,13 +664,13 @@ function saveChatMsg(msg) {
     try {
         const h = getChatHistory();
         h.push(msg);
-        if (h.length > 200) h.splice(0, h.length - 200);
+        if (h.length > 100) h.splice(0, h.length - 100);
         localStorage.setItem(CHAT_KEY, JSON.stringify(h));
     } catch(e) {}
 }
 
 function loadChatHistory() {
-    // Chat was cleared — start fresh. Only load from current key.
+    chatMsgs.innerHTML = '';
     getChatHistory().slice(-40).forEach(m => renderMsg(m, false));
     scrollChat();
 }
